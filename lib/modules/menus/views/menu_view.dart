@@ -230,11 +230,18 @@ class _MenuViewState extends State<MenuView> {
     _isProgrammaticScroll = false;
   }
 
+  /// Centra la pestaña activa moviendo solo la barra horizontal. `Scrollable.ensureVisible`
+  /// también movería la carta (la barra está fija dentro de ella) y la devolvería hacia arriba.
   void _revealActiveTab() {
-    final tabContext = _tabKeys[_activeCategoryId]?.currentContext;
-    if (tabContext != null) {
-      Scrollable.ensureVisible(tabContext, alignment: 0.5, duration: const Duration(milliseconds: 250));
-    }
+    final box = _tabKeys[_activeCategoryId]?.currentContext?.findRenderObject();
+    if (box == null || !box.attached || !_tabsScroll.hasClients) return;
+
+    final viewport = RenderAbstractViewport.maybeOf(box);
+    if (viewport == null) return;
+
+    final position = _tabsScroll.position;
+    final target = viewport.getOffsetToReveal(box, 0.5).offset.clamp(position.minScrollExtent, position.maxScrollExtent);
+    _tabsScroll.animateTo(target, duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
   }
 
   /// La pestaña activa sigue a la categoría que se está viendo al hacer scroll.
@@ -310,7 +317,7 @@ class _MenuViewState extends State<MenuView> {
                     if (site != null) ...[
                       Text(site.cuisine.toUpperCase(), style: AppFonts.eyebrow(color: c.tertiary)),
                       const SizedBox(height: 4),
-                      Text('La carta', style: AppFonts.headline(fontSize: 30, color: c.onSurface)),
+                      Text('La carta', style: AppFonts.headline(fontSize: 26, color: c.onSurface)),
                       const SizedBox(height: 4),
                       Row(
                         children: [

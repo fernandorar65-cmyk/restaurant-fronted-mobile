@@ -44,7 +44,7 @@ class AccessView extends StatelessWidget {
         Text(
           isRegister ? 'Crea tu cuenta' : 'Inicia sesión',
           textAlign: TextAlign.center,
-          style: AppFonts.headline(fontSize: 30, color: c.onSurface),
+          style: AppFonts.headline(fontSize: 26, color: c.onSurface),
         ),
         const SizedBox(height: 4),
         Text(

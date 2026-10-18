@@ -184,7 +184,7 @@ class _CustomerAccountViewState extends State<CustomerAccountView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Mesa ${attention.tableNumber}', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: c.onSurfaceVariant)),
-                    Text('Tu cuenta', style: AppFonts.headline(fontSize: 30, color: c.onSurface)),
+                    Text('Tu cuenta', style: AppFonts.headline(fontSize: 26, color: c.onSurface)),
                   ],
                 ),
               ),

@@ -251,7 +251,7 @@ class _RestaurantSelectViewState extends State<RestaurantSelectView> {
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
         children: [
-          Text('¿Dónde comemos hoy?', style: AppFonts.headline(fontSize: 30, color: c.onSurface)),
+          Text('¿Dónde comemos hoy?', style: AppFonts.headline(fontSize: 26, color: c.onSurface)),
           const SizedBox(height: 4),
           Text('Encuentra una sede cerca y mira su carta.', style: TextStyle(fontSize: 14, color: c.onSurfaceVariant)),
           const SizedBox(height: 20),

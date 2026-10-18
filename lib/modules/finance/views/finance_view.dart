@@ -247,7 +247,7 @@ class _FinanceViewState extends State<FinanceView> with FinancePeriodQuery<Finan
         padding: const EdgeInsets.all(16),
         children: [
           Text('CADENA', style: AppFonts.eyebrow(color: c.tertiary)),
-          Text('Finanzas', style: AppFonts.headline(fontSize: 28, color: c.onSurface)),
+          Text('Finanzas', style: AppFonts.headline(fontSize: 24, color: c.onSurface)),
           Text(capitalizeFirst(periodLabel(period, anchor)), style: TextStyle(fontSize: 14, color: c.onSurfaceVariant)),
           const SizedBox(height: 16),
           FinancePeriodPicker(

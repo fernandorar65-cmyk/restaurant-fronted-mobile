@@ -10,6 +10,14 @@ import 'stores/session_store.dart';
 import 'stores/theme_store.dart';
 import 'widgets/feedback/toast_host.dart';
 
+/// Scroll con rebote en todas las plataformas, como en una app nativa de iPhone.
+class _AppScrollBehavior extends MaterialScrollBehavior {
+  const _AppScrollBehavior();
+
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) => const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics());
+}
+
 class RestaurantApp extends StatefulWidget {
   const RestaurantApp({super.key});
 
@@ -47,6 +55,7 @@ class _RestaurantAppState extends State<RestaurantApp> {
         GlobalCupertinoLocalizations.delegate,
       ],
       routerConfig: _router,
+      scrollBehavior: const _AppScrollBehavior(),
       builder: (context, child) => ToastHost(
         // `_router.state` falla en el primer frame, antes de que el guard asíncrono resuelva la ruta.
         isPortal: () => _router.routerDelegate.currentConfiguration.uri.path.startsWith('/owner'),

@@ -191,7 +191,7 @@ class _CartViewState extends State<CartView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Tu orden', style: AppFonts.headline(fontSize: 30, color: c.onSurface)),
+          Text('Tu orden', style: AppFonts.headline(fontSize: 26, color: c.onSurface)),
           const SizedBox(height: 4),
           Text(
             diner.isReadyToOrder
@@ -323,7 +323,7 @@ class _SentView extends StatelessWidget {
               Text(
                 '¡Pedido enviado!',
                 textAlign: TextAlign.center,
-                style: AppFonts.headline(fontSize: 30, color: c.onSurface),
+                style: AppFonts.headline(fontSize: 26, color: c.onSurface),
               ),
               const SizedBox(height: 8),
               Text(

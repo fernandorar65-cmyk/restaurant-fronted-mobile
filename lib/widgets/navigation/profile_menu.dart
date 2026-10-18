@@ -30,6 +30,10 @@ class ProfileMenu extends StatelessWidget {
   }
 
   void _open(BuildContext context) {
+    // Se leen antes de abrir: la hoja puede reconstruirse cuando la pantalla de atrás ya no está activa.
+    final router = GoRouter.of(context);
+    final location = GoRouterState.of(context).uri.path;
+
     showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
@@ -38,11 +42,9 @@ class ProfileMenu extends StatelessWidget {
         final session = sheetContext.watch<SessionStore>();
         final c = sheetContext.colors;
         final hasAny = diner.customer != null || session.isAuthenticated;
-        final location = GoRouterState.of(context).uri.path;
-
         void go(String path) {
           Navigator.of(sheetContext).pop();
-          context.go(path);
+          router.go(path);
         }
 
         Widget section(String label) => Padding(
@@ -101,7 +103,7 @@ class ProfileMenu extends StatelessWidget {
                       diner.setCustomer(null);
                       // Si estaba en una pantalla de su cuenta, vuelve al inicio.
                       if (location == Routes.dinerProfile || location == Routes.dinerVisits) {
-                        context.go(Routes.home);
+                        router.go(Routes.home);
                       }
                     },
                   ),

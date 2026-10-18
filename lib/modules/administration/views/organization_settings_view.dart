@@ -112,7 +112,7 @@ class _OrganizationSettingsViewState extends State<OrganizationSettingsView> {
             ],
           ),
           const SizedBox(height: 8),
-          Text('Configuración de organización', style: AppFonts.headline(fontSize: 26, color: c.onSurface)),
+          Text('Configuración de organización', style: AppFonts.headline(fontSize: 24, color: c.onSurface)),
           const SizedBox(height: 4),
           Text('Datos generales de la cadena.', style: TextStyle(fontSize: 15, color: c.onSurfaceVariant)),
           const SizedBox(height: 20),

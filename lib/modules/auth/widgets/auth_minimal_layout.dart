@@ -80,7 +80,7 @@ class AuthMinimalLayout extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        Text(title, textAlign: TextAlign.center, style: AppFonts.headline(fontSize: 30, color: c.onSurface, height: 1.2)),
+                        Text(title, textAlign: TextAlign.center, style: AppFonts.headline(fontSize: 26, color: c.onSurface, height: 1.2)),
                         if (subtitle != null) ...[
                           const SizedBox(height: 8),
                           Text(subtitle!, textAlign: TextAlign.center, style: TextStyle(fontSize: 14, color: c.onSurfaceVariant)),

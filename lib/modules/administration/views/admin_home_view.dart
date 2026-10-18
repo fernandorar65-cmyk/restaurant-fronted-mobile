@@ -126,7 +126,7 @@ class _AdminHomeViewState extends State<AdminHomeView> {
         children: [
           Text((_organization?.name ?? 'Organización').toUpperCase(), style: AppFonts.eyebrow(color: c.primary)),
           const SizedBox(height: 4),
-          Text('Administración', style: AppFonts.headline(fontSize: 26, color: c.onSurface)),
+          Text('Administración', style: AppFonts.headline(fontSize: 24, color: c.onSurface)),
           const SizedBox(height: 4),
           Text(
             'Restaurantes, empleados, roles, inventario y configuración de toda la cadena.',

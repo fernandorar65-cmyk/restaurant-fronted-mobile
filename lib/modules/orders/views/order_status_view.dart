@@ -296,7 +296,7 @@ class _OrderStatusViewState extends State<OrderStatusView> {
                       'Mesa ${attention.tableNumber}',
                       style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: c.onSurfaceVariant),
                     ),
-                    Text('Tu pedido', style: AppFonts.headline(fontSize: 30, color: c.onSurface)),
+                    Text('Tu pedido', style: AppFonts.headline(fontSize: 26, color: c.onSurface)),
                   ],
                 ),
               ),

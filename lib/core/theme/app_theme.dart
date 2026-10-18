@@ -1,24 +1,26 @@
+import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'app_colors.dart';
 
-/// Tipografías del front web: Poppins (texto), Noto Serif (títulos), Public Sans (etiquetas).
+/// Tipografías: todo usa la fuente del sistema (San Francisco en iOS, Roboto en Android)
+/// para que se sienta como una app nativa; los títulos van en negrita.
 class AppFonts {
   AppFonts._();
 
-  static TextStyle headline({double? fontSize, FontWeight fontWeight = FontWeight.w600, Color? color, double? height}) =>
-      GoogleFonts.notoSerif(fontSize: fontSize, fontWeight: fontWeight, color: color, height: height);
+  static TextStyle headline({double? fontSize, FontWeight fontWeight = FontWeight.w700, Color? color, double? height}) =>
+      TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color, height: height, letterSpacing: -0.3);
 
   static TextStyle label({double? fontSize, FontWeight fontWeight = FontWeight.w600, Color? color, double? letterSpacing}) =>
-      GoogleFonts.publicSans(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing);
+      TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing);
 
   static TextStyle body({double? fontSize, FontWeight? fontWeight, Color? color, double? height}) =>
-      GoogleFonts.poppins(fontSize: fontSize, fontWeight: fontWeight, color: color, height: height);
+      TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color, height: height);
 
-  /// Etiqueta en mayúsculas con tracking amplio ("tracking-widest uppercase").
+  /// Etiqueta en mayúsculas con tracking ("tracking-widest uppercase").
   static TextStyle eyebrow({Color? color, double fontSize = 11}) =>
-      label(fontSize: fontSize, fontWeight: FontWeight.w700, color: color, letterSpacing: 1.6);
+      label(fontSize: fontSize, fontWeight: FontWeight.w700, color: color, letterSpacing: 1.2);
 }
 
 class AppTheme {
@@ -63,25 +65,36 @@ class AppTheme {
       onInverseSurface: c.surface,
     );
 
-    final bodyFont = GoogleFonts.poppins().fontFamily;
-    final baseText = ThemeData(brightness: brightness, fontFamily: bodyFont).textTheme.apply(
+    final baseText = ThemeData(brightness: brightness).textTheme.apply(
       bodyColor: c.onSurface,
       displayColor: c.onSurface,
     );
 
-    final radius = BorderRadius.circular(12);
+    final radius = BorderRadius.circular(14);
+    final isCupertino = defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS;
+    final buttonShape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(14));
+    const buttonSize = Size(48, 48);
+    final buttonText = AppFonts.label(fontSize: 15);
 
     return ThemeData(
       useMaterial3: true,
       brightness: brightness,
-      fontFamily: bodyFont,
       colorScheme: scheme,
+      // En iPhone no hay "onda" al tocar (solo el resaltado), y las páginas entran deslizando.
+      splashFactory: isCupertino ? NoSplash.splashFactory : InkSparkle.splashFactory,
+      pageTransitionsTheme: PageTransitionsTheme(
+        builders: {
+          TargetPlatform.iOS: const CupertinoPageTransitionsBuilder(),
+          TargetPlatform.macOS: const CupertinoPageTransitionsBuilder(),
+          TargetPlatform.android: const PredictiveBackPageTransitionsBuilder(),
+        },
+      ),
       scaffoldBackgroundColor: c.background,
       textTheme: baseText.copyWith(
-        headlineLarge: AppFonts.headline(fontSize: 30, color: c.onSurface),
-        headlineMedium: AppFonts.headline(fontSize: 26, color: c.onSurface),
-        headlineSmall: AppFonts.headline(fontSize: 22, color: c.onSurface),
-        titleLarge: AppFonts.headline(fontSize: 20, color: c.onSurface),
+        headlineLarge: AppFonts.headline(fontSize: 28, color: c.onSurface),
+        headlineMedium: AppFonts.headline(fontSize: 24, color: c.onSurface),
+        headlineSmall: AppFonts.headline(fontSize: 20, color: c.onSurface),
+        titleLarge: AppFonts.headline(fontSize: 18, color: c.onSurface),
       ),
       extensions: [c],
       appBarTheme: AppBarTheme(
@@ -89,8 +102,31 @@ class AppTheme {
         surfaceTintColor: Colors.transparent,
         foregroundColor: c.onSurface,
         elevation: 0,
-        scrolledUnderElevation: 0.5,
-        titleTextStyle: AppFonts.headline(fontSize: 18, color: c.onSurface),
+        scrolledUnderElevation: 0,
+        toolbarHeight: 56,
+        // Texto del sistema: los subtítulos de las barras no deben heredar la serif.
+        titleTextStyle: AppFonts.label(fontSize: 17, color: c.onSurface),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(minimumSize: buttonSize, shape: buttonShape, textStyle: buttonText),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(minimumSize: buttonSize, shape: buttonShape, textStyle: buttonText, elevation: 0),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          minimumSize: buttonSize,
+          shape: buttonShape,
+          textStyle: buttonText,
+          side: BorderSide(color: c.outlineVariant),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(textStyle: buttonText)),
+      listTileTheme: ListTileThemeData(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+        minVerticalPadding: 10,
+        titleTextStyle: AppFonts.label(fontSize: 16, fontWeight: FontWeight.w500, color: c.onSurface),
+        subtitleTextStyle: TextStyle(fontSize: 14, color: c.onSurfaceVariant),
       ),
       cardTheme: CardThemeData(
         color: c.surfaceContainerLowest,
@@ -103,11 +139,11 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: c.surfaceContainerLow,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         labelStyle: AppFonts.label(color: c.onSurfaceVariant, fontWeight: FontWeight.w500),
         hintStyle: TextStyle(color: c.outline),
         border: OutlineInputBorder(borderRadius: radius, borderSide: BorderSide(color: c.outlineVariant)),
-        enabledBorder: OutlineInputBorder(borderRadius: radius, borderSide: BorderSide(color: c.outlineVariant)),
+        enabledBorder: OutlineInputBorder(borderRadius: radius, borderSide: BorderSide(color: c.outlineVariant.withValues(alpha: 0.6))),
         focusedBorder: OutlineInputBorder(borderRadius: radius, borderSide: BorderSide(color: c.primary, width: 2)),
         errorBorder: OutlineInputBorder(borderRadius: radius, borderSide: BorderSide(color: c.error)),
         focusedErrorBorder: OutlineInputBorder(borderRadius: radius, borderSide: BorderSide(color: c.error, width: 2)),
@@ -133,11 +169,14 @@ class AppTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: c.surface,
+        height: 64,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         surfaceTintColor: Colors.transparent,
         indicatorColor: c.primaryFixed,
         labelTextStyle: WidgetStateProperty.resolveWith(
           (states) => AppFonts.label(
-            fontSize: 12,
+            fontSize: 11,
+            fontWeight: states.contains(WidgetState.selected) ? FontWeight.w700 : FontWeight.w500,
             color: states.contains(WidgetState.selected) ? c.primary : c.onSurfaceVariant,
           ),
         ),

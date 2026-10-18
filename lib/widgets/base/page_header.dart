@@ -23,8 +23,8 @@ class PageHeader extends StatelessWidget {
       children: [
         Text(title, style: AppFonts.headline(fontSize: 24, color: c.onSurface)),
         if (description != null) ...[
-          const SizedBox(height: 6),
-          Text(description!, style: TextStyle(color: c.onSurfaceVariant)),
+          const SizedBox(height: 4),
+          _Description(description!),
         ],
         if (child != null) ...[const SizedBox(height: 8), child!],
       ],
@@ -49,12 +49,17 @@ class SitePageHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('${restaurant.name} · $section', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: c.onSurfaceVariant)),
+        Text(
+          '${restaurant.name} · $section',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: c.onSurfaceVariant),
+        ),
         const SizedBox(height: 2),
-        Text(title, style: AppFonts.headline(fontSize: 26, color: c.onSurface)),
+        Text(title, style: AppFonts.headline(fontSize: 24, color: c.onSurface)),
         if (description != null) ...[
           const SizedBox(height: 4),
-          Text(description!, style: TextStyle(fontSize: 15, color: c.onSurfaceVariant)),
+          _Description(description!),
         ],
         if (actions.isNotEmpty) ...[
           const SizedBox(height: 12),
@@ -91,11 +96,11 @@ class AdminPageHeader extends StatelessWidget {
             Flexible(child: Text(section.toUpperCase(), style: AppFonts.eyebrow(color: c.primary), overflow: TextOverflow.ellipsis)),
           ],
         ),
-        const SizedBox(height: 12),
-        Text(title, style: AppFonts.headline(fontSize: 26, color: c.onSurface)),
+        const SizedBox(height: 8),
+        Text(title, style: AppFonts.headline(fontSize: 24, color: c.onSurface)),
         if (description != null) ...[
           const SizedBox(height: 4),
-          Text(description!, style: TextStyle(fontSize: 15, color: c.onSurfaceVariant)),
+          _Description(description!),
         ],
         if (actions.isNotEmpty) ...[
           const SizedBox(height: 12),
@@ -104,4 +109,19 @@ class AdminPageHeader extends StatelessWidget {
       ],
     );
   }
+}
+
+/// Texto de apoyo bajo el título: corto, como en una app (máximo dos líneas).
+class _Description extends StatelessWidget {
+  const _Description(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(
+        text,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(fontSize: 14, height: 1.35, color: context.colors.onSurfaceVariant),
+      );
 }
