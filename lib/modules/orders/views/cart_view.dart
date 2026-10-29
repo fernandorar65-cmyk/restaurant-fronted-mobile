@@ -13,6 +13,7 @@ import '../../../widgets/base/empty_state.dart';
 import '../../menus/widgets/quantity_stepper.dart';
 import '../api.dart';
 import '../types.dart';
+import '../../../widgets/base/page_header.dart';
 
 const Map<CartIssueKind, String> _issueLabel = {
   'missing': 'ya no está en la carta',
@@ -191,7 +192,7 @@ class _CartViewState extends State<CartView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Tu orden', style: AppFonts.headline(fontSize: 26, color: c.onSurface)),
+          const HeadingText('Tu ', accent: 'orden', fontSize: 36, height: 1.05),
           const SizedBox(height: 4),
           Text(
             diner.isReadyToOrder
@@ -320,11 +321,7 @@ class _SentView extends StatelessWidget {
                 child: Icon(Icons.check_rounded, size: 40, color: c.success),
               ),
               const SizedBox(height: 16),
-              Text(
-                '¡Pedido enviado!',
-                textAlign: TextAlign.center,
-                style: AppFonts.headline(fontSize: 26, color: c.onSurface),
-              ),
+              const HeadingText('¡Pedido ', accent: 'enviado!', fontSize: 30, textAlign: TextAlign.center),
               const SizedBox(height: 8),
               Text(
                 'El restaurante recibió tus $count producto(s) para la mesa ${tableNumber ?? ''}. Te avisaremos cuando '

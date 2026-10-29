@@ -11,6 +11,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/string.dart';
 import '../../../router/routes.dart';
 import '../../../stores/diner_store.dart';
+import '../../../widgets/base/page_header.dart';
 import '../../../widgets/base/skeleton_block.dart';
 import '../../../widgets/feedback/diner_notice.dart';
 import '../api.dart';
@@ -251,8 +252,15 @@ class _RestaurantSelectViewState extends State<RestaurantSelectView> {
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
         children: [
-          Text('¿Dónde comemos hoy?', style: AppFonts.headline(fontSize: 26, color: c.onSurface)),
-          const SizedBox(height: 4),
+          if (diner.customer != null) ...[
+            Text(
+              'Hola, ${diner.customer!.name.split(' ').first} 👋',
+              style: AppFonts.label(fontSize: 15, fontWeight: FontWeight.w500, color: c.onSurfaceVariant),
+            ),
+            const SizedBox(height: 4),
+          ],
+          const HeadingText('¿Dónde comemos ', accent: 'hoy?', fontSize: 36, height: 1.05),
+          const SizedBox(height: 8),
           Text('Encuentra una sede cerca y mira su carta.', style: TextStyle(fontSize: 14, color: c.onSurfaceVariant)),
           const SizedBox(height: 20),
           if (diner.isReadyToOrder) ...[
@@ -291,7 +299,7 @@ class _RestaurantSelectViewState extends State<RestaurantSelectView> {
                     color: c.surfaceContainerLowest.withValues(alpha: 0.95),
                     elevation: 3,
                     shadowColor: Colors.black26,
-                    borderRadius: BorderRadius.circular(16),
+                    shape: const StadiumBorder(),
                     child: TextField(
                       controller: _search,
                       textInputAction: TextInputAction.search,
@@ -310,8 +318,8 @@ class _RestaurantSelectViewState extends State<RestaurantSelectView> {
                         border: InputBorder.none,
                         enabledBorder: InputBorder.none,
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: BorderSide(color: c.primary, width: 2),
+                          borderRadius: BorderRadius.circular(999),
+                          borderSide: BorderSide(color: c.primaryInk, width: 2),
                         ),
                         contentPadding: const EdgeInsets.symmetric(vertical: 14),
                       ),
@@ -339,9 +347,9 @@ class _RestaurantSelectViewState extends State<RestaurantSelectView> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 if (_locating)
-                                  SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: c.primary))
+                                  SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: c.primaryInk))
                                 else
-                                  Icon(Icons.my_location_rounded, size: 16, color: c.primary),
+                                  Icon(Icons.my_location_rounded, size: 16, color: c.primaryInk),
                                 const SizedBox(width: 8),
                                 Text(
                                   _locating ? 'Buscando…' : (_userLocation != null ? 'Actualizar ubicación' : 'Cerca de mí'),
@@ -399,10 +407,7 @@ class _RestaurantSelectViewState extends State<RestaurantSelectView> {
             textBaseline: TextBaseline.alphabetic,
             children: [
               Expanded(
-                child: Text(
-                  _userLocation != null ? 'Cerca de ti' : 'Restaurantes',
-                  style: AppFonts.headline(fontSize: 20, color: c.onSurface),
-                ),
+                child: HeadingText(_userLocation != null ? 'Cerca de ti' : 'Restaurantes'),
               ),
               if (!_isLoading && !_hasLoadError)
                 Text(
@@ -442,12 +447,12 @@ class _RestaurantSelectViewState extends State<RestaurantSelectView> {
 
           // Recientes.
           const SizedBox(height: 24),
-          Text('Recientes', style: AppFonts.headline(fontSize: 20, color: c.onSurface)),
+          const HeadingText('Recientes'),
           const SizedBox(height: 12),
           if (recents.isEmpty)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), border: Border.all(color: c.outlineVariant)),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(24), border: Border.all(color: c.outlineVariant)),
               child: Text(
                 'Aquí verás las sedes que visites o cuya carta consultes.',
                 textAlign: TextAlign.center,
@@ -459,7 +464,7 @@ class _RestaurantSelectViewState extends State<RestaurantSelectView> {
               clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
                 color: c.surfaceContainerLowest,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(24),
                 border: Border.all(color: c.outlineVariant.withValues(alpha: 0.4)),
               ),
               child: Material(
@@ -516,7 +521,7 @@ class _RestaurantSelectViewState extends State<RestaurantSelectView> {
             children: [
               Text('¿Trabajas en un restaurante?', style: TextStyle(fontSize: 14, color: c.onSurfaceVariant)),
               TextButton(
-                style: TextButton.styleFrom(minimumSize: const Size(0, 44), foregroundColor: c.primary),
+                style: TextButton.styleFrom(minimumSize: const Size(0, 44), foregroundColor: c.primaryInk),
                 onPressed: () => context.push(Routes.login),
                 child: const Text('Acceso del personal', style: TextStyle(fontWeight: FontWeight.w600)),
               ),
@@ -564,9 +569,9 @@ class _ContinueCard extends StatelessWidget {
     final c = context.colors;
 
     return Material(
-      color: c.primary,
-      elevation: 3,
-      shadowColor: Colors.black26,
+      color: c.deep,
+      elevation: 4,
+      shadowColor: Colors.black38,
       borderRadius: BorderRadius.circular(24),
       child: InkWell(
         borderRadius: BorderRadius.circular(24),
@@ -582,13 +587,19 @@ class _ContinueCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('CONTINUAR EN TU MESA', style: AppFonts.eyebrow(color: c.onPrimary.withValues(alpha: 0.8))),
-                      const SizedBox(height: 2),
-                      Text(title, style: AppFonts.headline(fontSize: 18, color: c.onPrimary)),
+                      Text('CONTINUAR EN TU MESA', style: AppFonts.eyebrow(color: c.deepAccent)),
+                      const SizedBox(height: 4),
+                      Text(title, style: AppFonts.headline(fontSize: 17, color: c.onDeep)),
                     ],
                   ),
                 ),
-                Icon(Icons.arrow_forward_rounded, color: c.onPrimary),
+                const SizedBox(width: 12),
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(color: c.primary, shape: BoxShape.circle),
+                  child: Icon(Icons.arrow_forward_rounded, size: 20, color: c.onPrimary),
+                ),
               ],
             ),
           ),
@@ -610,7 +621,7 @@ class _ScanQrButton extends StatelessWidget {
 
     return Material(
       color: c.surfaceContainerLowest,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: c.primary, width: 1.5)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: c.primaryInk, width: 1.5)),
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
         onTap: onTap,
@@ -621,7 +632,7 @@ class _ScanQrButton extends StatelessWidget {
               Container(
                 width: 48,
                 height: 48,
-                decoration: BoxDecoration(color: c.primary, borderRadius: BorderRadius.circular(14)),
+                decoration: BoxDecoration(color: c.primary, borderRadius: BorderRadius.circular(12)),
                 child: Icon(Icons.qr_code_scanner_rounded, color: c.onPrimary),
               ),
               const SizedBox(width: 14),
@@ -635,7 +646,7 @@ class _ScanQrButton extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right_rounded, color: c.primary),
+              Icon(Icons.chevron_right_rounded, color: c.primaryInk),
             ],
           ),
         ),
@@ -659,8 +670,8 @@ class _FilterChip extends StatelessWidget {
       selected: selected,
       button: true,
       child: Material(
-        color: selected ? c.onSurface : c.surfaceContainerLowest,
-        shape: StadiumBorder(side: selected ? BorderSide.none : BorderSide(color: c.outlineVariant.withValues(alpha: 0.6))),
+        color: selected ? c.primary : c.surfaceContainerLowest,
+        shape: StadiumBorder(side: selected ? BorderSide.none : BorderSide(color: c.outlineVariant)),
         child: InkWell(
           customBorder: const StadiumBorder(),
           onTap: onTap,
@@ -668,7 +679,7 @@ class _FilterChip extends StatelessWidget {
             constraints: const BoxConstraints(minHeight: 44),
             padding: const EdgeInsets.symmetric(horizontal: 16),
             alignment: Alignment.center,
-            child: Text(label, style: AppFonts.label(fontSize: 14, color: selected ? c.surface : c.onSurfaceVariant)),
+            child: Text(label, style: AppFonts.label(fontSize: 14, color: selected ? c.onPrimary : c.onSurfaceVariant)),
           ),
         ),
       ),
@@ -692,18 +703,18 @@ class _ResultCard extends StatelessWidget {
     return Material(
       color: c.surfaceContainerLowest,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: selected ? BorderSide(color: c.primary, width: 2) : BorderSide(color: c.outlineVariant.withValues(alpha: 0.4)),
+        borderRadius: BorderRadius.circular(24),
+        side: selected ? BorderSide(color: c.primaryInk, width: 2) : BorderSide(color: c.outlineVariant.withValues(alpha: 0.4)),
       ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _SiteImage(url: site.imageUrl, size: 96),
+              _SiteImage(url: site.imageUrl, size: 96, radius: 16),
               const SizedBox(width: 16),
               Expanded(
                 child: ConstrainedBox(
@@ -719,7 +730,7 @@ class _ResultCard extends StatelessWidget {
                               site.name,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: AppFonts.headline(fontSize: 16, color: c.onSurface),
+                              style: AppFonts.title(fontSize: 16, color: c.heading),
                             ),
                           ),
                           if (distance != null) ...[
@@ -746,9 +757,9 @@ class _ResultCard extends StatelessWidget {
                           Expanded(child: Text(site.categoryLabel, style: TextStyle(fontSize: 12, color: c.onSurfaceVariant))),
                           Material(
                             color: c.primary,
-                            borderRadius: BorderRadius.circular(12),
+                            shape: const StadiumBorder(),
                             child: InkWell(
-                              borderRadius: BorderRadius.circular(12),
+                              customBorder: const StadiumBorder(),
                               onTap: onMenu,
                               child: ConstrainedBox(
                                 constraints: const BoxConstraints(minHeight: 40, minWidth: 44),

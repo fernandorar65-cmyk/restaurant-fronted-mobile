@@ -39,7 +39,7 @@ class SiteFloorTable extends StatelessWidget {
         color: selected ? c.surfaceContainer : Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: selected ? BorderSide(color: c.primary, width: 2) : BorderSide.none,
+          side: selected ? BorderSide(color: c.primaryInk, width: 2) : BorderSide.none,
         ),
         child: InkWell(
           borderRadius: BorderRadius.circular(12),

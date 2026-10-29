@@ -149,7 +149,7 @@ class _TransferPaymentState extends State<TransferPayment> {
                               onPressed: () => _copy(item.label, item.value),
                               child: Text(
                                 _copiedLabel == item.label ? 'Copiado' : 'Copiar',
-                                style: AppFonts.label(fontSize: 12, color: c.primary),
+                                style: AppFonts.label(fontSize: 12, color: c.primaryInk),
                               ),
                             ),
                     ),
@@ -168,7 +168,7 @@ class _TransferPaymentState extends State<TransferPayment> {
               color: hasVoucher ? c.primaryFixed.withValues(alpha: 0.3) : Colors.transparent,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
-                side: BorderSide(color: hasVoucher ? c.primary : c.outlineVariant, width: 2),
+                side: BorderSide(color: hasVoucher ? c.primaryInk : c.outlineVariant, width: 2),
               ),
               child: InkWell(
                 borderRadius: BorderRadius.circular(12),
@@ -180,7 +180,7 @@ class _TransferPaymentState extends State<TransferPayment> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(hasVoucher ? Icons.description_outlined : Icons.upload_rounded, size: 32, color: hasVoucher ? c.primary : c.outline),
+                        Icon(hasVoucher ? Icons.description_outlined : Icons.upload_rounded, size: 32, color: hasVoucher ? c.primaryInk : c.outline),
                         const SizedBox(height: 8),
                         Text(
                           _voucher ?? 'Sube la captura o el PDF',

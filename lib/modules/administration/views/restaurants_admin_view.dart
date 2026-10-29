@@ -178,7 +178,7 @@ class _RestaurantCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                   decoration: BoxDecoration(color: c.surfaceContainer, borderRadius: BorderRadius.circular(999)),
-                  child: Text(restaurant.statusLabel, style: AppFonts.label(fontSize: 12, color: c.primary)),
+                  child: Text(restaurant.statusLabel, style: AppFonts.label(fontSize: 12, color: c.primaryInk)),
                 ),
             ],
           ),

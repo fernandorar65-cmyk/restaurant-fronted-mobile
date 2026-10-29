@@ -10,6 +10,7 @@ import '../../../stores/checkout_store.dart';
 import '../../../stores/diner_store.dart';
 import '../../../widgets/base/base_button.dart';
 import '../checkout.dart';
+import '../../../widgets/base/page_header.dart';
 
 /// Pedido confirmado: comprobante del pago simulado.
 class CheckoutResultView extends StatefulWidget {
@@ -66,7 +67,7 @@ class _CheckoutResultViewState extends State<CheckoutResultView> {
                 ),
               ),
               const SizedBox(height: 12),
-              Text('¡Pedido confirmado!', textAlign: TextAlign.center, style: AppFonts.headline(fontSize: 28, color: c.onSurface)),
+              const HeadingText('¡Pedido ', accent: 'confirmado!', fontSize: 30, textAlign: TextAlign.center),
               const SizedBox(height: 8),
               Text(_headline(receipt), textAlign: TextAlign.center, style: TextStyle(fontSize: 16, color: c.onSurfaceVariant)),
               const SizedBox(height: 12),

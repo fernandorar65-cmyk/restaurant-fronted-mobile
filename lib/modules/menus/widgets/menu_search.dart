@@ -190,7 +190,7 @@ class _MenuSearchState extends State<MenuSearch> {
             style: TextStyle(fontSize: 16, color: c.onSurface),
             decoration: InputDecoration(
               hintText: 'Buscar un plato o bebida',
-              fillColor: c.surfaceContainerLowest,
+              fillColor: c.surfaceContainer,
               prefixIcon: Icon(Icons.search_rounded, color: c.outline),
               suffixIcon: _isSearching
                   ? Padding(
@@ -204,12 +204,9 @@ class _MenuSearchState extends State<MenuSearch> {
                           onPressed: widget.controller.clear,
                         )
                       : null,
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(999), borderSide: BorderSide(color: c.outlineVariant)),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(999),
-                borderSide: BorderSide(color: c.outlineVariant.withValues(alpha: 0.5)),
-              ),
-              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(999), borderSide: BorderSide(color: c.primary, width: 2)),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(999), borderSide: BorderSide.none),
+              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(999), borderSide: BorderSide.none),
+              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(999), borderSide: BorderSide(color: c.primaryInk, width: 2)),
             ),
           ),
           if (_isOpen) ...[
@@ -296,7 +293,7 @@ class _MenuSearchState extends State<MenuSearch> {
                 for (final part in _highlight(product.name))
                   TextSpan(
                     text: part.text,
-                    style: part.match ? TextStyle(fontWeight: FontWeight.w600, color: c.primary) : null,
+                    style: part.match ? TextStyle(fontWeight: FontWeight.w600, color: c.primaryInk) : null,
                   ),
               ],
             ),

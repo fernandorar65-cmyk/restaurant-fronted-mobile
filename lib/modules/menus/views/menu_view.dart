@@ -20,8 +20,9 @@ import '../types.dart';
 import '../widgets/menu_product_card.dart';
 import '../widgets/menu_product_detail_dialog.dart';
 import '../widgets/menu_search.dart';
+import '../../../widgets/base/page_header.dart';
 
-const double _tabsHeight = 60;
+const double _tabsHeight = 64;
 
 /// Carta del comensal (/:restaurantSlug/menu).
 class MenuView extends StatefulWidget {
@@ -317,7 +318,7 @@ class _MenuViewState extends State<MenuView> {
                     if (site != null) ...[
                       Text(site.cuisine.toUpperCase(), style: AppFonts.eyebrow(color: c.tertiary)),
                       const SizedBox(height: 4),
-                      Text('La carta', style: AppFonts.headline(fontSize: 26, color: c.onSurface)),
+                      const HeadingText('La carta', fontSize: 36, height: 1.05),
                       const SizedBox(height: 4),
                       Row(
                         children: [
@@ -421,28 +422,25 @@ class _MenuViewState extends State<MenuView> {
                   color: c.primary,
                   elevation: 6,
                   shadowColor: Colors.black38,
-                  borderRadius: BorderRadius.circular(16),
+                  shape: const StadiumBorder(),
                   child: InkWell(
-                    borderRadius: BorderRadius.circular(16),
+                    customBorder: const StadiumBorder(),
                     onTap: () => context.go(Routes.cart),
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(minHeight: 56),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.fromLTRB(10, 0, 20, 0),
                         child: Row(
                           children: [
                             Container(
-                              constraints: const BoxConstraints(minWidth: 28),
-                              height: 28,
+                              constraints: const BoxConstraints(minWidth: 36),
+                              height: 36,
                               padding: const EdgeInsets.symmetric(horizontal: 8),
                               alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: c.onPrimary.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(999),
-                              ),
-                              child: Text('${cart.itemCount}', style: AppFonts.label(fontSize: 14, color: c.onPrimary)),
+                              decoration: BoxDecoration(color: c.deep, borderRadius: BorderRadius.circular(999)),
+                              child: Text('${cart.itemCount}', style: AppFonts.label(fontSize: 14, fontWeight: FontWeight.w700, color: c.onDeep)),
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: 12),
                             Expanded(child: Text('Ver carrito', style: AppFonts.label(fontSize: 16, color: c.onPrimary))),
                             Text(formatMoney(cart.subtotal, currency), style: AppFonts.label(fontSize: 16, color: c.onPrimary)),
                           ],
@@ -549,7 +547,7 @@ class _CategorySection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.baseline,
                 textBaseline: TextBaseline.alphabetic,
                 children: [
-                  Expanded(child: Text(category.name, style: AppFonts.headline(fontSize: 20, color: c.onSurface))),
+                  Expanded(child: HeadingText(category.name)),
                   Text(
                     '${items.length} ${items.length == 1 ? 'opción' : 'opciones'}',
                     style: AppFonts.label(fontSize: 12, fontWeight: FontWeight.w500, color: c.outline),
@@ -597,7 +595,7 @@ class _TabsDelegate extends SliverPersistentHeaderDelegate {
         child: SingleChildScrollView(
           controller: controller,
           scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Row(
             children: [
               for (final category in categories)
@@ -633,8 +631,10 @@ class _CategoryTab extends StatelessWidget {
       selected: selected,
       button: true,
       child: Material(
-        color: selected ? c.onSurface : c.surfaceContainerLowest,
-        shape: StadiumBorder(side: selected ? BorderSide.none : BorderSide(color: c.outlineVariant.withValues(alpha: 0.6))),
+        color: selected ? c.deep : c.surfaceContainerLowest,
+        elevation: selected ? 2 : 0,
+        shadowColor: Colors.black26,
+        shape: StadiumBorder(side: selected ? BorderSide.none : BorderSide(color: c.outlineVariant)),
         child: InkWell(
           customBorder: const StadiumBorder(),
           onTap: onTap,
@@ -642,7 +642,7 @@ class _CategoryTab extends StatelessWidget {
             constraints: const BoxConstraints(minHeight: 44),
             padding: const EdgeInsets.symmetric(horizontal: 16),
             alignment: Alignment.center,
-            child: Text(label, style: AppFonts.label(fontSize: 14, color: selected ? c.surface : c.onSurfaceVariant)),
+            child: Text(label, style: AppFonts.label(fontSize: 14, color: selected ? c.onDeep : c.onSurfaceVariant)),
           ),
         ),
       ),

@@ -44,7 +44,7 @@ class AccessView extends StatelessWidget {
         Text(
           isRegister ? 'Crea tu cuenta' : 'Inicia sesión',
           textAlign: TextAlign.center,
-          style: AppFonts.headline(fontSize: 26, color: c.onSurface),
+          style: AppFonts.title(fontSize: 30, color: c.heading),
         ),
         const SizedBox(height: 4),
         Text(
@@ -117,7 +117,7 @@ class AccessView extends StatelessWidget {
           children: [
             Text(isRegister ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?', style: TextStyle(fontSize: 14, color: c.onSurfaceVariant)),
             TextButton(
-              style: TextButton.styleFrom(minimumSize: const Size(0, 44), foregroundColor: c.primary),
+              style: TextButton.styleFrom(minimumSize: const Size(0, 44), foregroundColor: c.primaryInk),
               onPressed: () => context.go(isRegister ? Routes.access : '${Routes.access}?modo=registro'),
               child: Text(isRegister ? 'Inicia sesión' : 'Regístrate', style: const TextStyle(fontWeight: FontWeight.w600)),
             ),

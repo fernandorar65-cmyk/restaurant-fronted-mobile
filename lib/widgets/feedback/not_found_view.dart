@@ -28,10 +28,10 @@ class NotFoundView extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('404', style: AppFonts.headline(fontSize: 72, color: c.primary)),
+                Text('404', style: AppFonts.headline(fontSize: 72, color: c.primaryInk)),
                 Text('ERROR 404', style: AppFonts.eyebrow(color: c.onSurfaceVariant)),
                 const SizedBox(height: 12),
-                Text('Página no encontrada', style: AppFonts.headline(fontSize: 22, color: c.onSurface)),
+                Text('Página no encontrada', style: AppFonts.title(fontSize: 22, color: c.heading)),
                 const SizedBox(height: 8),
                 Text(
                   'La dirección que buscas no existe o cambió.',

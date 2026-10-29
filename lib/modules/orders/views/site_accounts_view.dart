@@ -499,7 +499,7 @@ class _SiteAccountsViewState extends State<SiteAccountsView> {
                 : TextButton(
                     style: TextButton.styleFrom(minimumSize: const Size(0, 44)),
                     onPressed: () => _openAccount(attention),
-                    child: Text(active ? 'Ver cuenta' : 'Detalle', style: AppFonts.label(fontSize: 14, color: c.primary)),
+                    child: Text(active ? 'Ver cuenta' : 'Detalle', style: AppFonts.label(fontSize: 14, color: c.primaryInk)),
                   ),
           ),
         ],

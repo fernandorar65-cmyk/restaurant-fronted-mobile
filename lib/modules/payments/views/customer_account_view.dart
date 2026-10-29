@@ -20,6 +20,7 @@ import '../../restaurants/api.dart';
 import '../account.dart';
 import '../api.dart';
 import '../types.dart';
+import '../../../widgets/base/page_header.dart';
 
 /// Cuenta del comensal (/orders/:attentionId/cuenta): saldo, consumo y pagos. Se actualiza cada 8 s.
 class CustomerAccountView extends StatefulWidget {
@@ -184,7 +185,7 @@ class _CustomerAccountViewState extends State<CustomerAccountView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Mesa ${attention.tableNumber}', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: c.onSurfaceVariant)),
-                    Text('Tu cuenta', style: AppFonts.headline(fontSize: 26, color: c.onSurface)),
+                    const HeadingText('Tu ', accent: 'cuenta', fontSize: 36, height: 1.05),
                   ],
                 ),
               ),

@@ -188,7 +188,7 @@ class _RoleCard extends StatelessWidget {
                 decoration: BoxDecoration(color: c.surfaceContainer, borderRadius: BorderRadius.circular(999)),
                 child: Text(
                   '$userCount ${userCount == 1 ? 'usuario' : 'usuarios'}',
-                  style: AppFonts.label(fontSize: 12, fontWeight: FontWeight.w700, color: c.primary),
+                  style: AppFonts.label(fontSize: 12, fontWeight: FontWeight.w700, color: c.primaryInk),
                 ),
               ),
             ],
@@ -204,8 +204,8 @@ class _RoleCard extends StatelessWidget {
                 for (final permission in role.permissions)
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(color: c.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-                    child: Text(permissionLabel[permission] ?? permission, style: AppFonts.label(fontSize: 13, color: c.primary)),
+                    decoration: BoxDecoration(color: c.primaryFixed, borderRadius: BorderRadius.circular(8)),
+                    child: Text(permissionLabel[permission] ?? permission, style: AppFonts.label(fontSize: 13, color: c.onPrimaryFixed)),
                   ),
               ],
             ),

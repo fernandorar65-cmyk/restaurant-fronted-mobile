@@ -20,7 +20,7 @@ Future<bool> confirmAction(
       final c = dialogContext.colors;
 
       return AlertDialog(
-        title: Text(title, style: AppFonts.headline(fontSize: 20, color: c.onSurface)),
+        title: Text(title, style: AppFonts.title(fontSize: 20, color: c.heading)),
         content: message == null ? null : Text(message, style: TextStyle(color: c.onSurfaceVariant)),
         actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         actions: [

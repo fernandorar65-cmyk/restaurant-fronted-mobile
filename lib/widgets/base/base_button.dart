@@ -51,10 +51,10 @@ class BaseButton extends StatelessWidget {
       'dark' => (c.onSurface, c.surface),
       _ => (c.surfaceContainer, c.onSurface),
     };
-    final (double height, double padding, double fontSize, double radius) = switch (size) {
-      'sm' => (36.0, 12.0, 13.0, 8.0),
-      'lg' => (48.0, 20.0, 16.0, 12.0),
-      _ => (44.0, 16.0, 14.0, 12.0),
+    final (double height, double padding, double fontSize) = switch (size) {
+      'sm' => (36.0, 14.0, 13.0),
+      'lg' => (48.0, 22.0, 16.0),
+      _ => (44.0, 18.0, 14.0),
     };
     final isDisabled = disabled || loading || (onPressed == null && to == null);
 
@@ -85,11 +85,13 @@ class BaseButton extends StatelessWidget {
       opacity: isDisabled ? 0.5 : 1,
       child: Material(
         color: background,
-        borderRadius: BorderRadius.circular(radius),
+        shape: const StadiumBorder(),
         elevation: variant == 'primary' ? 1 : 0,
         shadowColor: Colors.black26,
         child: InkWell(
-          borderRadius: BorderRadius.circular(radius),
+          customBorder: const StadiumBorder(),
+          // El botón principal pasa a primaryContainer al presionarlo.
+          highlightColor: variant == 'primary' ? c.primaryContainer : null,
           onTap: isDisabled
               ? null
               : () {

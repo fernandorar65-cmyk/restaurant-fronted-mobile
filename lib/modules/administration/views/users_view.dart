@@ -292,7 +292,7 @@ class _UserCard extends StatelessWidget {
                 PopupMenuItem(value: 'active', child: Text(user.isActive ? 'Desactivar' : 'Activar')),
                 PopupMenuItem(
                   value: 'blocked',
-                  child: Text(user.isBlocked ? 'Desbloquear' : 'Bloquear', style: TextStyle(color: user.isBlocked ? c.primary : c.error)),
+                  child: Text(user.isBlocked ? 'Desbloquear' : 'Bloquear', style: TextStyle(color: user.isBlocked ? c.primaryInk : c.error)),
                 ),
               ],
             ],

@@ -7,6 +7,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../router/routes.dart';
 import '../../../stores/diner_store.dart';
 import '../../../widgets/base/base_button.dart';
+import '../../../widgets/base/page_header.dart';
 import '../../../widgets/feedback/diner_notice.dart';
 import '../../orders/api.dart';
 import '../../orders/types.dart';
@@ -177,7 +178,7 @@ class _TableEntryViewState extends State<TableEntryView> {
                 SizedBox(
                   width: 40,
                   height: 40,
-                  child: CircularProgressIndicator(strokeWidth: 4, color: c.primary, backgroundColor: c.primaryFixed),
+                  child: CircularProgressIndicator(strokeWidth: 4, color: c.primaryInk, backgroundColor: c.primaryFixed),
                 ),
                 const SizedBox(height: 12),
                 Text('Buscando tu mesa…', style: TextStyle(fontSize: 16, color: c.onSurfaceVariant)),
@@ -215,6 +216,8 @@ class _TableEntryViewState extends State<TableEntryView> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  const HeadingText('¿Estás en esta ', accent: 'mesa?', fontSize: 30, textAlign: TextAlign.center),
+                  const SizedBox(height: 20),
                   Container(
                     clipBehavior: Clip.antiAlias,
                     decoration: BoxDecoration(
@@ -248,7 +251,7 @@ class _TableEntryViewState extends State<TableEntryView> {
                                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: c.onSurfaceVariant),
                               ),
                               const SizedBox(height: 4),
-                              Text('Mesa ${widget.tableId}', textAlign: TextAlign.center, style: AppFonts.headline(fontSize: 48, color: c.onSurface)),
+                              Text('Mesa ${widget.tableId}', textAlign: TextAlign.center, style: AppFonts.title(fontSize: 48, color: c.heading)),
                               const SizedBox(height: 4),
                               Text(restaurant.address, textAlign: TextAlign.center, style: TextStyle(fontSize: 14, color: c.onSurfaceVariant)),
                             ],
@@ -297,7 +300,7 @@ class _TableEntryViewState extends State<TableEntryView> {
                         style: TextStyle(fontSize: 14, color: c.onSurfaceVariant),
                       ),
                       TextButton(
-                        style: TextButton.styleFrom(minimumSize: const Size(0, 44), foregroundColor: c.primary),
+                        style: TextButton.styleFrom(minimumSize: const Size(0, 44), foregroundColor: c.primaryInk),
                         onPressed: customer != null ? () => diner.setCustomer(null) : () => _continueAs('account'),
                         child: Text(
                           customer != null ? 'Pedir como invitado' : 'Iniciar sesión (opcional)',

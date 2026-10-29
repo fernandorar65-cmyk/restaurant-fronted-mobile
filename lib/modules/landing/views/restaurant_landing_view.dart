@@ -9,6 +9,7 @@ import '../../../router/routes.dart';
 import '../../../widgets/base/base_button.dart';
 import '../../../widgets/navigation/theme_menu.dart';
 import '../../auth/brand.dart';
+import '../../../widgets/base/page_header.dart';
 
 const _nav = [
   (id: 'funciones', label: 'Funciones'),
@@ -183,7 +184,7 @@ class _RestaurantLandingViewState extends State<RestaurantLandingView> {
                     child: Icon(Icons.menu_book_outlined, size: 20, color: c.onPrimary),
                   ),
                   const SizedBox(width: 10),
-                  Text('RentaSol', style: AppFonts.headline(fontSize: 18, color: c.onSurface)),
+                  Text('RentaSol', style: AppFonts.title(fontSize: 18, color: c.heading)),
                 ],
               ),
             ),
@@ -269,7 +270,7 @@ class _RestaurantLandingViewState extends State<RestaurantLandingView> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(Icons.check_circle_outline_rounded, size: 20, color: c.primary),
+                          Icon(Icons.check_circle_outline_rounded, size: 20, color: c.primaryInk),
                           const SizedBox(width: 12),
                           Expanded(child: Text(point, style: TextStyle(fontSize: 15, color: c.onSurfaceVariant, height: 1.4))),
                         ],
@@ -280,7 +281,7 @@ class _RestaurantLandingViewState extends State<RestaurantLandingView> {
                     child: TextButton(
                       style: TextButton.styleFrom(minimumSize: const Size(44, 44), padding: EdgeInsets.zero),
                       onPressed: () => context.go(Routes.home),
-                      child: Text('Probar la experiencia del cliente →', style: AppFonts.label(fontSize: 15, color: c.primary)),
+                      child: Text('Probar la experiencia del cliente →', style: AppFonts.label(fontSize: 15, color: c.primaryInk)),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -341,16 +342,7 @@ class _RestaurantLandingViewState extends State<RestaurantLandingView> {
             ),
           ),
           const SizedBox(height: 16),
-          Text.rich(
-            TextSpan(
-              text: 'Tu restaurante conectado, ',
-              children: [
-                TextSpan(text: 'de la mesa a la cocina', style: TextStyle(fontStyle: FontStyle.italic, color: c.primary)),
-                const TextSpan(text: '.'),
-              ],
-            ),
-            style: AppFonts.headline(fontSize: 34, color: c.onSurface, height: 1.15),
-          ),
+          const HeadingText('Tu restaurante conectado, ', accent: 'de la mesa a la cocina', trailing: '.', fontSize: 34, height: 1.15),
           const SizedBox(height: 16),
           Text(
             'RentaSol reúne tu carta digital, los pedidos por QR, la cocina, los cobros, el delivery y las métricas de todas tus '
@@ -537,7 +529,7 @@ class _RestaurantLandingViewState extends State<RestaurantLandingView> {
         children: [
           Text(eyebrow.toUpperCase(), style: AppFonts.eyebrow(color: c.tertiary)),
           const SizedBox(height: 8),
-          Text(title, style: AppFonts.headline(fontSize: 28, color: c.onSurface, height: 1.2)),
+          HeadingText(title, fontSize: 28, height: 1.2),
           if (subtitle != null) ...[
             const SizedBox(height: 8),
             Text(subtitle, style: TextStyle(fontSize: 15, color: c.onSurfaceVariant)),
@@ -552,52 +544,42 @@ class _RestaurantLandingViewState extends State<RestaurantLandingView> {
   Widget _finalCta(AppColors c) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: Stack(
+      // Bloque azul petróleo: botón blanco con texto `deep` y botón con contorno blanco.
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: c.deep,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: const [BoxShadow(color: Color(0x33000000), blurRadius: 16, offset: Offset(0, 6))],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Positioned.fill(
-              child: ExcludeSemantics(
-                child: Image.network(
-                  authShowcaseImageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stack) => ColoredBox(color: c.primary),
-                ),
-              ),
+            HeadingText('Lleva tu restaurante a RentaSol', fontSize: 26, height: 1.2, color: c.onDeep),
+            const SizedBox(height: 8),
+            Text(
+              'Crea tu cuenta, sube tu carta y empieza a recibir pedidos.',
+              style: TextStyle(fontSize: 15, color: c.onDeep.withValues(alpha: 0.85)),
             ),
-            const Positioned.fill(child: ColoredBox(color: Color(0xB3000000))),
-            Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text('Lleva tu restaurante a RentaSol', style: AppFonts.headline(fontSize: 26, color: Colors.white, height: 1.2)),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Crea tu cuenta, sube tu carta y empieza a recibir pedidos.',
-                    style: TextStyle(fontSize: 15, color: Colors.white.withValues(alpha: 0.85)),
-                  ),
-                  const SizedBox(height: 20),
-                  BaseButton(
-                    label: 'Registrar mi restaurante',
-                    variant: 'primary',
-                    size: 'lg',
-                    block: true,
-                    onPressed: () => context.go(Routes.register),
-                  ),
-                  const SizedBox(height: 8),
-                  OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(48),
-                      foregroundColor: Colors.white,
-                      side: const BorderSide(color: Color(0x99FFFFFF)),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    onPressed: () => context.go(Routes.login),
-                    child: Text('Ya tengo cuenta', style: AppFonts.label(fontSize: 16, color: Colors.white)),
-                  ),
-                ],
+            const SizedBox(height: 20),
+            FilledButton(
+              style: FilledButton.styleFrom(
+                minimumSize: const Size.fromHeight(48),
+                backgroundColor: Colors.white,
+                foregroundColor: c.deep,
               ),
+              onPressed: () => context.go(Routes.register),
+              child: Text('Registrar mi restaurante', style: AppFonts.label(fontSize: 16, color: c.deep)),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size.fromHeight(48),
+                foregroundColor: c.onDeep,
+                side: BorderSide(color: c.onDeep),
+              ),
+              onPressed: () => context.go(Routes.login),
+              child: Text('Ya tengo cuenta', style: AppFonts.label(fontSize: 16, color: c.onDeep)),
             ),
           ],
         ),
@@ -881,7 +863,7 @@ class _DishMockup extends StatelessWidget {
                     const SizedBox(height: 16),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(color: c.primary, borderRadius: BorderRadius.circular(12)),
+                      decoration: BoxDecoration(color: c.primary, borderRadius: BorderRadius.circular(999)),
                       child: Row(
                         children: [
                           Expanded(child: Text('+ Agregar a la orden', style: AppFonts.label(fontSize: 14, color: c.onPrimary))),

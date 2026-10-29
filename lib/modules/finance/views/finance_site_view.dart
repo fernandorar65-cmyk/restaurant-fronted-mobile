@@ -322,7 +322,7 @@ class _FinanceSiteViewState extends State<FinanceSiteView> with FinancePeriodQue
             ),
           ),
           Text('DETALLE DEL LOCAL', style: AppFonts.eyebrow(color: c.tertiary)),
-          Text(site?.name ?? 'Local', style: AppFonts.headline(fontSize: 28, color: c.onSurface)),
+          Text(site?.name ?? 'Local', style: AppFonts.title(fontSize: 30, color: c.heading)),
           Text(capitalizeFirst(periodLabel(period, anchor)), style: TextStyle(fontSize: 14, color: c.onSurfaceVariant)),
           if (accessible.length > 1) ...[
             const SizedBox(height: 12),

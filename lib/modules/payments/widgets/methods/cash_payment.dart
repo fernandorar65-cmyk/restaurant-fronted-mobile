@@ -131,7 +131,7 @@ class _CashPaymentState extends State<CashPayment> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.info_outline_rounded, size: 16, color: c.primary),
+                    Icon(Icons.info_outline_rounded, size: 16, color: c.primaryInk),
                     const SizedBox(width: 8),
                     Expanded(child: Text(_where[mode] ?? '', style: TextStyle(fontSize: 14, color: c.onSurfaceVariant))),
                   ],
@@ -158,9 +158,9 @@ class _CashPaymentState extends State<CashPayment> {
 
                     return Material(
                       color: selected ? c.primary : c.surfaceContainer,
-                      borderRadius: BorderRadius.circular(12),
+                      shape: const StadiumBorder(),
                       child: InkWell(
-                        borderRadius: BorderRadius.circular(12),
+                        customBorder: const StadiumBorder(),
                         onTap: () => _choose(value),
                         child: Center(
                           child: Text(

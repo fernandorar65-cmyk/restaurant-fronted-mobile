@@ -80,7 +80,7 @@ class AuthMinimalLayout extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        Text(title, textAlign: TextAlign.center, style: AppFonts.headline(fontSize: 26, color: c.onSurface, height: 1.2)),
+                        Text(title, textAlign: TextAlign.center, style: AppFonts.title(fontSize: 30, color: c.heading, height: 1.2)),
                         if (subtitle != null) ...[
                           const SizedBox(height: 8),
                           Text(subtitle!, textAlign: TextAlign.center, style: TextStyle(fontSize: 14, color: c.onSurfaceVariant)),
@@ -121,7 +121,7 @@ class AuthMinimalLayout extends StatelessWidget {
                               TextButton(
                                 style: TextButton.styleFrom(minimumSize: const Size(44, 44), padding: const EdgeInsets.symmetric(horizontal: 4)),
                                 onPressed: () => context.go(other.to),
-                                child: Text(other.action, style: AppFonts.label(fontSize: 14, color: c.primary)),
+                                child: Text(other.action, style: AppFonts.label(fontSize: 14, color: c.primaryInk)),
                               ),
                             ],
                           ),

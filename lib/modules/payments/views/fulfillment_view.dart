@@ -272,7 +272,7 @@ class _FulfillmentViewState extends State<FulfillmentView> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                         side: BorderSide(
-                          color: selected ? c.primary : c.outlineVariant.withValues(alpha: 0.4),
+                          color: selected ? c.primaryInk : c.outlineVariant.withValues(alpha: 0.4),
                           width: selected ? 2 : 1,
                         ),
                       ),
@@ -458,9 +458,9 @@ class _FulfillmentViewState extends State<FulfillmentView> {
                   checked: selected,
                   child: Material(
                     color: selected ? c.primary : c.surfaceContainer,
-                    borderRadius: BorderRadius.circular(12),
+                    shape: const StadiumBorder(),
                     child: InkWell(
-                      borderRadius: BorderRadius.circular(12),
+                      customBorder: const StadiumBorder(),
                       onTap: () {
                         pickup.arrivalTime = slot;
                         _store.save();

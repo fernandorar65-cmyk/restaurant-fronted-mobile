@@ -18,6 +18,7 @@ import '../../restaurants/api.dart';
 import '../../restaurants/types.dart';
 import '../../restaurants/widgets/restaurant_edit_dialog.dart';
 import '../widgets/admin_form.dart';
+import '../../../widgets/base/page_header.dart';
 
 /// Directorio de sedes operativas: el usuario elige desde qué sede opera (equivale a DashboardView.vue).
 class DashboardView extends StatefulWidget {
@@ -149,11 +150,11 @@ class _DashboardViewState extends State<DashboardView> {
             children: [
               Container(width: 8, height: 8, decoration: BoxDecoration(color: c.primary, shape: BoxShape.circle)),
               const SizedBox(width: 8),
-              Text('PANEL DE SELECCIÓN', style: AppFonts.eyebrow(color: c.primary)),
+              Text('PANEL DE SELECCIÓN', style: AppFonts.eyebrow(color: c.primaryInk)),
             ],
           ),
           const SizedBox(height: 4),
-          Text('Directorio de sedes operativas', style: AppFonts.headline(fontSize: 24, color: c.onSurface)),
+          const HeadingText('Directorio de sedes operativas', fontSize: 30),
           const SizedBox(height: 4),
           Text(
             'Elige la sede desde la que vas a operar. Los indicadores son de demostración hasta conectar el API.',
@@ -186,32 +187,50 @@ class _DashboardViewState extends State<DashboardView> {
             ],
           ),
           const SizedBox(height: 20),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
+          // Barra de filtros: chips en píldora y buscador en píldora sin borde.
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(color: c.surfaceContainerLowest, borderRadius: BorderRadius.circular(24)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                for (final filter in _categoryFilters)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: ChoiceChip(
-                      label: Text(filter.label),
-                      selected: _activeCategory == filter.id,
-                      onSelected: (_) => setState(() => _activeCategory = filter.id),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      for (final filter in _categoryFilters)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: ChoiceChip(
+                            label: Text(filter.label),
+                            selected: _activeCategory == filter.id,
+                            showCheckmark: false,
+                            onSelected: (_) => setState(() => _activeCategory = filter.id),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: _search,
+                  textInputAction: TextInputAction.search,
+                  decoration: InputDecoration(
+                    hintText: 'Filtrar por nombre, ciudad o código...',
+                    fillColor: c.surfaceContainer,
+                    prefixIcon: const Icon(Icons.search_rounded),
+                    suffixIcon: _search.text.isEmpty
+                        ? null
+                        : IconButton(tooltip: 'Limpiar', icon: const Icon(Icons.close_rounded), onPressed: _search.clear),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(999), borderSide: BorderSide.none),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(999), borderSide: BorderSide.none),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(999),
+                      borderSide: BorderSide(color: c.primaryInk, width: 2),
                     ),
                   ),
+                ),
               ],
-            ),
-          ),
-          const SizedBox(height: 10),
-          TextField(
-            controller: _search,
-            textInputAction: TextInputAction.search,
-            decoration: InputDecoration(
-              hintText: 'Filtrar por nombre, ciudad o código...',
-              prefixIcon: const Icon(Icons.search_rounded),
-              suffixIcon: _search.text.isEmpty
-                  ? null
-                  : IconButton(tooltip: 'Limpiar', icon: const Icon(Icons.close_rounded), onPressed: _search.clear),
             ),
           ),
           const SizedBox(height: 16),
@@ -249,13 +268,12 @@ class _OrganizationChip extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: c.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: c.outlineVariant.withValues(alpha: 0.6)),
+        borderRadius: BorderRadius.circular(999),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.apartment_rounded, size: 20, color: c.primary),
+          Icon(Icons.apartment_rounded, size: 20, color: c.primaryInk),
           const SizedBox(width: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -283,21 +301,22 @@ class _RestaurantSiteCard extends StatelessWidget {
   static const Map<RestaurantBadgeTone, (Color, Color)> _badgeColors = {
     'amber': (Color(0xFFF59E0B), Color(0xFF020617)),
     'wine': (Color(0xFFB45309), Colors.white),
-    'blue': (Color(0xFF2563EB), Colors.white),
   };
 
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
     final kpis = restaurant.kpis;
-    final (badgeBackground, badgeForeground) =
-        restaurant.badgeTone == 'emerald' ? (c.success, c.onSuccess) : (_badgeColors[restaurant.badgeTone] ?? _badgeColors['blue']!);
+    final (badgeBackground, badgeForeground) = switch (restaurant.badgeTone) {
+      'emerald' => (c.success, c.onSuccess),
+      final tone => _badgeColors[tone] ?? (c.deep, c.onDeep),
+    };
 
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: c.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: c.outlineVariant.withValues(alpha: 0.6)),
         boxShadow: const [BoxShadow(color: Color(0x0D000000), blurRadius: 4, offset: Offset(0, 1))],
       ),
@@ -400,7 +419,7 @@ class _RestaurantSiteCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.location_on_outlined, size: 16, color: c.primary),
+                    Icon(Icons.location_on_outlined, size: 16, color: c.primaryInk),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
@@ -485,12 +504,12 @@ class _RestaurantSiteCard extends StatelessWidget {
                         onPressed: onEnter,
                         style: OutlinedButton.styleFrom(
                           minimumSize: const Size.fromHeight(44),
-                          foregroundColor: c.primary,
-                          backgroundColor: c.primary.withValues(alpha: 0.1),
-                          side: BorderSide(color: c.primary),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          foregroundColor: c.onPrimaryFixed,
+                          backgroundColor: c.primaryFixed,
+                          side: BorderSide(color: c.primaryInk),
+                          shape: const StadiumBorder(),
                         ),
-                        child: Text('Sede activa', style: AppFonts.label(fontSize: 14, color: c.primary)),
+                        child: Text('Sede activa', style: AppFonts.label(fontSize: 14, color: c.onPrimaryFixed)),
                       )
                     : BaseButton(label: 'Entrar a sala de mando', variant: 'primary', block: true, onPressed: onEnter),
               ],
@@ -532,8 +551,7 @@ class _KpiBox extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: c.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: c.outlineVariant.withValues(alpha: 0.6)),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

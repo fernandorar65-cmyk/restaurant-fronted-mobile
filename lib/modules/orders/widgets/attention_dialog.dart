@@ -191,9 +191,9 @@ class _AttentionDialogState extends State<AttentionDialog> {
           if (_isActive && canManage && !_isCancellingAttention)
             Material(
               color: c.surfaceContainer,
-              borderRadius: BorderRadius.circular(12),
+              shape: const StadiumBorder(),
               child: InkWell(
-                borderRadius: BorderRadius.circular(12),
+                customBorder: const StadiumBorder(),
                 onTap: () => setState(() => _isCancellingAttention = true),
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(minHeight: 44),
@@ -279,7 +279,7 @@ class _AttentionDialogState extends State<AttentionDialog> {
               onPressed: _toggleHistory,
               child: Text(
                 _isHistoryOpen ? 'Ocultar historial' : 'Ver historial de estados',
-                style: AppFonts.label(fontSize: 13, color: c.primary),
+                style: AppFonts.label(fontSize: 13, color: c.primaryInk),
               ),
             ),
           ),

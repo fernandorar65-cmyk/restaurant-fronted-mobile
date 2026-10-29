@@ -63,7 +63,7 @@ class AttentionCard extends StatelessWidget {
               const Spacer(),
               Text(
                 formatMoney(subtotal, currency),
-                style: tabular(AppFonts.label(fontSize: 14, fontWeight: FontWeight.w700, color: c.primary)),
+                style: tabular(AppFonts.label(fontSize: 14, fontWeight: FontWeight.w700, color: c.primaryInk)),
               ),
             ],
           ),

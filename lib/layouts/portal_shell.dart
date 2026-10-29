@@ -116,26 +116,46 @@ class _PortalShellState extends State<PortalShell> {
         titleSpacing: 0,
         title: InkWell(
           onTap: () => context.go(landingRouteFor(session.user)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
-              Text('Restaurant-CMR', style: AppFonts.headline(fontSize: 17, color: c.onSurface)),
-              if (site != null)
-                Row(
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(color: c.primary, borderRadius: BorderRadius.circular(12)),
+                child: Icon(Icons.restaurant_rounded, size: 18, color: c.onPrimary),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(width: 7, height: 7, decoration: BoxDecoration(color: c.success, shape: BoxShape.circle)),
-                    const SizedBox(width: 6),
-                    Flexible(
-                      child: Text(
-                        canSwitchSite ? '${site.name} · Cambiar' : site.name,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 12, color: c.onSurfaceVariant),
-                      ),
-                    ),
+                    Text('Restaurant-CMR', style: AppFonts.title(fontSize: 17, color: c.heading)),
+                    if (site != null)
+                      // Selector de sede en píldora.
+                      Container(
+                        margin: const EdgeInsets.only(top: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(color: c.surfaceContainerLow, borderRadius: BorderRadius.circular(999)),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(width: 7, height: 7, decoration: BoxDecoration(color: c.success, shape: BoxShape.circle)),
+                            const SizedBox(width: 6),
+                            Flexible(
+                              child: Text(
+                                canSwitchSite ? '${site.name} · Cambiar' : site.name,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(fontSize: 12, color: c.onSurfaceVariant),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    else
+                      Text('Portal del restaurante', style: TextStyle(fontSize: 12, color: c.onSurfaceVariant)),
                   ],
-                )
-              else
-                Text('Portal del restaurante', style: TextStyle(fontSize: 12, color: c.onSurfaceVariant)),
+                ),
+              ),
             ],
           ),
         ),
@@ -296,10 +316,13 @@ class PortalDrawer extends StatelessWidget {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
         child: Material(
-          color: active ? c.primaryContainer : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
+          color: active ? c.deep : Colors.transparent,
+          shape: const StadiumBorder(),
+          elevation: active ? 2 : 0,
+          shadowColor: Colors.black26,
           child: InkWell(
-            borderRadius: BorderRadius.circular(12),
+            customBorder: const StadiumBorder(),
+            highlightColor: c.surfaceContainer,
             onTap: () {
               Navigator.of(context).pop();
               context.go(to);
@@ -307,13 +330,13 @@ class PortalDrawer extends StatelessWidget {
             child: ConstrainedBox(
               constraints: const BoxConstraints(minHeight: 46),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   children: [
-                    Icon(icon, size: 20, color: active ? c.onPrimaryContainer : c.onSurfaceVariant),
+                    Icon(icon, size: 20, color: active ? c.onDeep : c.onSurfaceVariant),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: Text(label, style: AppFonts.label(fontSize: 14, color: active ? c.onPrimaryContainer : c.onSurfaceVariant)),
+                      child: Text(label, style: AppFonts.label(fontSize: 14, color: active ? c.onDeep : c.onSurfaceVariant)),
                     ),
                     if (badge > 0)
                       Container(

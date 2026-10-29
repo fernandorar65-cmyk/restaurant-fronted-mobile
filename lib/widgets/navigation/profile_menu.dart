@@ -63,7 +63,7 @@ class ProfileMenu extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Bienvenido a RentaSol', style: AppFonts.headline(fontSize: 20, color: c.onSurface)),
+                        Text('Bienvenido a RentaSol', style: AppFonts.title(fontSize: 20, color: c.heading)),
                         const SizedBox(height: 4),
                         Text(
                           'Guarda tus pedidos y preferencias, o gestiona tu restaurante.',

@@ -102,7 +102,7 @@ class _CheckoutViewState extends State<CheckoutView> {
                     trailing: TextButton(
                       style: TextButton.styleFrom(minimumSize: const Size(44, 44)),
                       onPressed: () => context.go(Routes.checkoutFulfillment),
-                      child: Text('Cambiar', style: AppFonts.label(fontSize: 14, color: c.primary)),
+                      child: Text('Cambiar', style: AppFonts.label(fontSize: 14, color: c.primaryInk)),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -158,7 +158,7 @@ class _MethodOption extends StatelessWidget {
         color: c.surfaceContainerLowest,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: selected ? c.primary : c.outlineVariant.withValues(alpha: 0.4), width: selected ? 2 : 1),
+          side: BorderSide(color: selected ? c.primaryInk : c.outlineVariant.withValues(alpha: 0.4), width: selected ? 2 : 1),
         ),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
@@ -195,7 +195,7 @@ class _MethodOption extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: selected ? c.primary : null,
-                      border: Border.all(color: selected ? c.primary : c.outlineVariant, width: 2),
+                      border: Border.all(color: selected ? c.primaryInk : c.outlineVariant, width: 2),
                     ),
                     child: selected
                         ? Container(width: 8, height: 8, decoration: BoxDecoration(color: c.onPrimary, shape: BoxShape.circle))

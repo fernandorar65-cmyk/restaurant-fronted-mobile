@@ -72,7 +72,7 @@ class BaseDialogFrame extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (eyebrow != null) Text(eyebrow!.toUpperCase(), style: AppFonts.eyebrow(color: c.tertiary)),
-                        Text(title, style: AppFonts.headline(fontSize: 22, color: c.onSurface, height: 1.2)),
+                        Text(title, style: AppFonts.title(fontSize: 22, color: c.heading, height: 1.2)),
                         if (subtitle != null) ...[
                           const SizedBox(height: 4),
                           Text(subtitle!, style: TextStyle(fontSize: 14, color: c.onSurfaceVariant)),

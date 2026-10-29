@@ -41,7 +41,7 @@ class CustomerShell extends StatelessWidget {
               Container(
                 width: 32,
                 height: 32,
-                decoration: BoxDecoration(color: c.primary, borderRadius: BorderRadius.circular(8)),
+                decoration: BoxDecoration(color: c.primary, borderRadius: BorderRadius.circular(12)),
                 child: Icon(Icons.menu_book_outlined, size: 18, color: c.onPrimary),
               ),
               const SizedBox(width: 10),
@@ -49,7 +49,7 @@ class CustomerShell extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, overflow: TextOverflow.ellipsis, style: AppFonts.headline(fontSize: 16, color: c.onSurface)),
+                    Text(title, overflow: TextOverflow.ellipsis, style: AppFonts.title(fontSize: 16, color: c.heading)),
                     if (isHome || diner.restaurantId == null)
                       Text('Pide desde tu mesa', style: TextStyle(fontSize: 12, color: c.onSurfaceVariant)),
                   ],
@@ -72,13 +72,7 @@ class CustomerShell extends StatelessWidget {
             IconButton(
               tooltip: 'Ver carrito',
               onPressed: () => context.push(Routes.cart),
-              icon: Badge(
-                isLabelVisible: cart.itemCount > 0,
-                label: Text(cart.itemCount > 99 ? '99+' : '${cart.itemCount}'),
-                backgroundColor: c.primary,
-                textColor: c.onPrimary,
-                child: const Icon(Icons.shopping_cart_outlined),
-              ),
+              icon: CartCountBadge(count: cart.itemCount, child: const Icon(Icons.shopping_cart_outlined)),
             ),
           const SizedBox(width: 4),
         ],
@@ -96,16 +90,8 @@ class CustomerShell extends StatelessWidget {
         destinations: [
           for (final item in items)
             NavigationDestination(
-              icon: Badge(
-                isLabelVisible: (item.badge ?? 0) > 0,
-                label: Text('${item.badge ?? 0}'),
-                child: Icon(item.icon),
-              ),
-              selectedIcon: Badge(
-                isLabelVisible: (item.badge ?? 0) > 0,
-                label: Text('${item.badge ?? 0}'),
-                child: Icon(item.selectedIcon),
-              ),
+              icon: CartCountBadge(count: item.badge ?? 0, child: Icon(item.icon)),
+              selectedIcon: CartCountBadge(count: item.badge ?? 0, child: Icon(item.selectedIcon)),
               label: item.label,
             ),
         ],
@@ -155,6 +141,42 @@ class CustomerShell extends StatelessWidget {
         matches: (path) => [Routes.access, Routes.dinerProfile, Routes.dinerVisits].contains(path),
       ),
     ];
+  }
+}
+
+/// Contador de productos: círculo verde con el número en `onPrimary` y un anillo del color de la superficie.
+class CartCountBadge extends StatelessWidget {
+  const CartCountBadge({super.key, required this.count, required this.child});
+
+  final int count;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+
+    if (count <= 0) return child;
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        child,
+        Positioned(
+          top: -7,
+          right: -10,
+          child: Container(
+            constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: c.primary,
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(color: c.surface, width: 2),
+            ),
+            child: Text(count > 99 ? '99+' : '$count', style: AppFonts.label(fontSize: 10, fontWeight: FontWeight.w700, color: c.onPrimary)),
+          ),
+        ),
+      ],
+    );
   }
 }
 

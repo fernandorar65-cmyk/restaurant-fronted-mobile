@@ -132,7 +132,7 @@ class MenuProductDetailDialog extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.room_service_outlined, size: 20, color: c.primary),
+                Icon(Icons.room_service_outlined, size: 20, color: c.primaryInk),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(product.presentation, style: TextStyle(fontSize: 14, height: 1.5, color: c.onSurfaceVariant)),
@@ -212,9 +212,9 @@ class _DetailFooter extends StatelessWidget {
     if (orderable && quantity == 0) {
       return Material(
         color: c.primary,
-        borderRadius: BorderRadius.circular(12),
+        shape: const StadiumBorder(),
         child: InkWell(
-          borderRadius: BorderRadius.circular(12),
+          customBorder: const StadiumBorder(),
           onTap: onIncrease,
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 48),

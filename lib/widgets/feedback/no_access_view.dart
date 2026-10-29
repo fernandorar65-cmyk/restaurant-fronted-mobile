@@ -38,7 +38,7 @@ class NoAccessView extends StatelessWidget {
               child: Icon(Icons.lock_outline_rounded, color: c.onSurfaceVariant, size: 28),
             ),
             const SizedBox(height: 16),
-            Text('Sin acceso', style: AppFonts.headline(fontSize: 24, color: c.onSurface)),
+            Text('Sin acceso', style: AppFonts.title(fontSize: 24, color: c.heading)),
             const SizedBox(height: 8),
             Text(message, textAlign: TextAlign.center, style: TextStyle(fontSize: 14, color: c.onSurfaceVariant)),
             if (session.user?.roleName != null) ...[

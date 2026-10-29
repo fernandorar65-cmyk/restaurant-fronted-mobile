@@ -210,7 +210,7 @@ class _ExpenseDialogState extends State<ExpenseDialog> {
               TextButton(
                 style: TextButton.styleFrom(minimumSize: const Size(0, 44)),
                 onPressed: widget.onManageCategories,
-                child: Text('Gestionar categorías', style: AppFonts.label(fontSize: 13, color: c.primary)),
+                child: Text('Gestionar categorías', style: AppFonts.label(fontSize: 13, color: c.primaryInk)),
               ),
             ],
           ),
@@ -235,7 +235,7 @@ class _ExpenseDialogState extends State<ExpenseDialog> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                             side: BorderSide(
-                              color: _category == category.id ? c.primary : c.outlineVariant.withValues(alpha: 0.5),
+                              color: _category == category.id ? c.primaryInk : c.outlineVariant.withValues(alpha: 0.5),
                               width: _category == category.id ? 2 : 1,
                             ),
                           ),
@@ -250,7 +250,7 @@ class _ExpenseDialogState extends State<ExpenseDialog> {
                                   Icon(
                                     expenseIconData(category.icon),
                                     size: 20,
-                                    color: _category == category.id ? c.primary : c.onSurfaceVariant,
+                                    color: _category == category.id ? c.primaryInk : c.onSurfaceVariant,
                                   ),
                                   const SizedBox(height: 6),
                                   Text(

@@ -16,7 +16,7 @@ class SiteStaffCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.colors;
     final (Color background, Color foreground) = switch (member.status) {
-      'on-shift' => (c.primary.withValues(alpha: 0.1), c.primary),
+      'on-shift' => (c.primaryFixed, c.onPrimaryFixed),
       'break' => (c.tertiaryFixed, c.onTertiaryContainer),
       _ => (c.errorContainer, c.onErrorContainer),
     };

@@ -64,7 +64,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
             constraints: const BoxConstraints(minHeight: 48),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             enabledBorder: border(hasError ? c.error : c.outlineVariant.withValues(alpha: 0.7)),
-            focusedBorder: border(hasError ? c.error : c.primary, 2),
+            focusedBorder: border(hasError ? c.error : c.primaryInk, 2),
             suffixIcon: isPassword
                 ? IconButton(
                     tooltip: _isPasswordVisible ? 'Ocultar contraseña' : 'Mostrar contraseña',

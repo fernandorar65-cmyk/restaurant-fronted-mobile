@@ -322,9 +322,9 @@ class _AccountDialogState extends State<AccountDialog> {
           if (_isActive && account.paid == 0 && !_isCancelling)
             Material(
               color: c.surfaceContainer,
-              borderRadius: BorderRadius.circular(12),
+              shape: const StadiumBorder(),
               child: InkWell(
-                borderRadius: BorderRadius.circular(12),
+                customBorder: const StadiumBorder(),
                 onTap: () => setState(() => _isCancelling = true),
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(minHeight: 44),
@@ -658,7 +658,7 @@ class _AccountDialogState extends State<AccountDialog> {
                             color: _method == option ? c.primaryFixed : c.surfaceContainerLowest,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
-                              side: BorderSide(color: _method == option ? c.primary : Colors.transparent, width: 2),
+                              side: BorderSide(color: _method == option ? c.primaryInk : Colors.transparent, width: 2),
                             ),
                             child: InkWell(
                               borderRadius: BorderRadius.circular(12),

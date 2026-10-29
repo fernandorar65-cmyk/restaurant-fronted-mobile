@@ -202,8 +202,8 @@ class _PaymentMethodViewState extends State<PaymentMethodView> {
               child: TextButton.icon(
                 style: TextButton.styleFrom(minimumSize: const Size(44, 44), padding: const EdgeInsets.symmetric(horizontal: 4)),
                 onPressed: _processing ? null : _changeMethod,
-                icon: Icon(Icons.arrow_back_rounded, size: 18, color: c.primary),
-                label: Text('Cambiar método', style: AppFonts.label(fontSize: 14, color: c.primary)),
+                icon: Icon(Icons.arrow_back_rounded, size: 18, color: c.primaryInk),
+                label: Text('Cambiar método', style: AppFonts.label(fontSize: 14, color: c.primaryInk)),
               ),
             ),
           ),

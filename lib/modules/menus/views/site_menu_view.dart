@@ -624,7 +624,7 @@ class _ProductTile extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text(formatMoney(product.price, currency), style: AppFonts.label(fontSize: 14, fontWeight: FontWeight.w700, color: c.primary)),
+                Text(formatMoney(product.price, currency), style: AppFonts.label(fontSize: 14, fontWeight: FontWeight.w700, color: c.primaryInk)),
               ],
             ),
             if (product.description.isNotEmpty) ...[
@@ -636,7 +636,7 @@ class _ProductTile extends StatelessWidget {
               spacing: 4,
               runSpacing: 4,
               children: [
-                for (final tag in product.tags) badge(tag, c.primary.withValues(alpha: 0.1), c.primary),
+                for (final tag in product.tags) badge(tag, c.primaryFixed, c.onPrimaryFixed),
                 if (!product.isActive)
                   badge('OCULTO', c.surfaceContainerHigh, c.onSurfaceVariant)
                 else if (!product.isAvailable)

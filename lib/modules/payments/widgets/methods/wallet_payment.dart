@@ -181,7 +181,7 @@ class _WalletPaymentState extends State<WalletPayment> {
                                   style: AppFonts.label(fontSize: 16, fontWeight: FontWeight.w700, color: c.onSurface, letterSpacing: 0.6),
                                 ),
                                 const SizedBox(width: 8),
-                                Text(_copied ? 'Copiado' : 'Copiar', style: AppFonts.label(fontSize: 12, color: c.primary)),
+                                Text(_copied ? 'Copiado' : 'Copiar', style: AppFonts.label(fontSize: 12, color: c.primaryInk)),
                               ],
                             ),
                           ),

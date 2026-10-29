@@ -19,7 +19,7 @@ class RestaurantSiteCard extends StatelessWidget {
       'amber' => (const Color(0xFFF59E0B), const Color(0xFF020617)),
       'emerald' => (c.success, c.onSuccess),
       'wine' => (const Color(0xFFB45309), Colors.white),
-      'blue' => (const Color(0xFF2563EB), Colors.white),
+      'blue' => (c.deep, c.onDeep),
       _ => (c.surfaceContainerHigh, c.onSurface),
     };
     final kpis = restaurant.kpis;
@@ -29,8 +29,7 @@ class RestaurantSiteCard extends StatelessWidget {
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: c.surfaceContainerLow,
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: c.outlineVariant.withValues(alpha: 0.6)),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,7 +49,7 @@ class RestaurantSiteCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: c.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: c.outlineVariant.withValues(alpha: 0.6)),
         boxShadow: const [BoxShadow(color: Color(0x0D000000), blurRadius: 4, offset: Offset(0, 1))],
       ),
@@ -153,7 +152,7 @@ class RestaurantSiteCard extends StatelessWidget {
                   decoration: BoxDecoration(border: Border(bottom: BorderSide(color: c.outlineVariant.withValues(alpha: 0.6)))),
                   child: Row(
                     children: [
-                      Icon(Icons.location_on_outlined, size: 16, color: c.primary),
+                      Icon(Icons.location_on_outlined, size: 16, color: c.primaryInk),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(restaurant.address, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: c.onSurfaceVariant)),
@@ -220,20 +219,17 @@ class RestaurantSiteCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       Material(
-                        color: isSelected ? c.primary.withValues(alpha: 0.1) : c.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
-                          side: isSelected ? BorderSide(color: c.primary) : BorderSide.none,
-                        ),
+                        color: isSelected ? c.primaryFixed : c.primary,
+                        shape: StadiumBorder(side: isSelected ? BorderSide(color: c.primaryInk) : BorderSide.none),
                         child: InkWell(
-                          borderRadius: BorderRadius.circular(6),
+                          customBorder: const StadiumBorder(),
                           onTap: onEnter,
                           child: ConstrainedBox(
                             constraints: const BoxConstraints(minHeight: 44),
                             child: Center(
                               child: Text(
                                 isSelected ? 'Sede activa' : 'Entrar a sala de mando',
-                                style: AppFonts.label(fontSize: 13, color: isSelected ? c.primary : c.onPrimary),
+                                style: AppFonts.label(fontSize: 13, color: isSelected ? c.onPrimaryFixed : c.onPrimary),
                               ),
                             ),
                           ),

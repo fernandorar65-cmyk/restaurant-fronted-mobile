@@ -97,7 +97,7 @@ class _DinerVisitsViewState extends State<DinerVisitsView> {
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
         children: [
-          Text('Mis visitas', style: AppFonts.headline(fontSize: 24, color: c.onSurface)),
+          Text('Mis visitas', style: AppFonts.title(fontSize: 30, color: c.heading)),
           if (customer != null) Text('Historial de ${customer.name}', style: TextStyle(fontSize: 14, color: c.onSurfaceVariant)),
           const SizedBox(height: 20),
           if (customer == null)

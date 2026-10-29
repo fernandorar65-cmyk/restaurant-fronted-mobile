@@ -554,7 +554,7 @@ class _SiteDashboardViewState extends State<SiteDashboardView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('Plano de sala', style: AppFonts.headline(fontSize: 20, color: c.onSurface)),
+              Text('Plano de sala', style: AppFonts.title(fontSize: 20, color: c.heading)),
               const SizedBox(height: 4),
               Text(
                 'Cada punto es una silla. Toca una mesa para ver su atención y su QR.'
@@ -684,10 +684,10 @@ class _SiteDashboardViewState extends State<SiteDashboardView> {
     Widget statusChip(String label, bool ok) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
-            color: ok ? c.primary.withValues(alpha: 0.1) : c.errorContainer,
+            color: ok ? c.primaryFixed : c.errorContainer,
             borderRadius: BorderRadius.circular(4),
           ),
-          child: Text(label, style: AppFonts.label(fontSize: 12, color: ok ? c.primary : c.onErrorContainer)),
+          child: Text(label, style: AppFonts.label(fontSize: 12, color: ok ? c.onPrimaryFixed : c.onErrorContainer)),
         );
 
     return Container(

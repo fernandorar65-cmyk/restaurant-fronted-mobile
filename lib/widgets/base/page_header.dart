@@ -6,22 +6,60 @@ import '../../core/theme/app_theme.dart';
 import '../../modules/restaurants/types.dart';
 import '../../router/routes.dart';
 
+/// Título de página o de sección en 800 y `heading`. Si [accent] está, se agrega
+/// después de [text] en `headingAccent` ("Tu **orden**").
+class HeadingText extends StatelessWidget {
+  const HeadingText(this.text, {super.key, this.accent, this.trailing, this.fontSize = 20, this.height, this.textAlign, this.color});
+
+  final String text;
+  final String? accent;
+
+  /// Texto que sigue a la palabra destacada, de nuevo en `heading`.
+  final String? trailing;
+  final double fontSize;
+  final double? height;
+  final TextAlign? textAlign;
+
+  /// Para títulos sobre bloques de color (por ejemplo `onDeep`).
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    final style = AppFonts.title(fontSize: fontSize, color: color ?? c.heading, height: height);
+
+    if (accent == null) return Text(text, style: style, textAlign: textAlign);
+    return Text.rich(
+      TextSpan(
+        style: style,
+        children: [
+          TextSpan(text: text),
+          TextSpan(text: accent, style: TextStyle(color: c.headingAccent)),
+          if (trailing != null) TextSpan(text: trailing),
+        ],
+      ),
+      textAlign: textAlign,
+    );
+  }
+}
+
 /// Encabezado simple de una vista.
 class PageHeader extends StatelessWidget {
-  const PageHeader({super.key, required this.title, this.description, this.child});
+  const PageHeader({super.key, required this.title, this.accent, this.description, this.child});
 
   final String title;
+
+  /// Palabra destacada en verde al final del título.
+  final String? accent;
   final String? description;
   final Widget? child;
 
   @override
   Widget build(BuildContext context) {
-    final c = context.colors;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: AppFonts.headline(fontSize: 24, color: c.onSurface)),
+        HeadingText(title, accent: accent, fontSize: 30),
         if (description != null) ...[
           const SizedBox(height: 4),
           _Description(description!),
@@ -56,7 +94,7 @@ class SitePageHeader extends StatelessWidget {
           style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: c.onSurfaceVariant),
         ),
         const SizedBox(height: 2),
-        Text(title, style: AppFonts.headline(fontSize: 24, color: c.onSurface)),
+        HeadingText(title, fontSize: 30),
         if (description != null) ...[
           const SizedBox(height: 4),
           _Description(description!),
@@ -93,11 +131,11 @@ class AdminPageHeader extends StatelessWidget {
               child: Text('ADMINISTRACIÓN', style: AppFonts.eyebrow(color: c.onSurfaceVariant)),
             ),
             Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Text('/', style: TextStyle(color: c.outlineVariant))),
-            Flexible(child: Text(section.toUpperCase(), style: AppFonts.eyebrow(color: c.primary), overflow: TextOverflow.ellipsis)),
+            Flexible(child: Text(section.toUpperCase(), style: AppFonts.eyebrow(color: c.primaryInk), overflow: TextOverflow.ellipsis)),
           ],
         ),
         const SizedBox(height: 8),
-        Text(title, style: AppFonts.headline(fontSize: 24, color: c.onSurface)),
+        HeadingText(title, fontSize: 30),
         if (description != null) ...[
           const SizedBox(height: 4),
           _Description(description!),

@@ -124,9 +124,9 @@ class _AdminHomeViewState extends State<AdminHomeView> {
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text((_organization?.name ?? 'Organización').toUpperCase(), style: AppFonts.eyebrow(color: c.primary)),
+          Text((_organization?.name ?? 'Organización').toUpperCase(), style: AppFonts.eyebrow(color: c.primaryInk)),
           const SizedBox(height: 4),
-          Text('Administración', style: AppFonts.headline(fontSize: 24, color: c.onSurface)),
+          Text('Administración', style: AppFonts.title(fontSize: 30, color: c.heading)),
           const SizedBox(height: 4),
           Text(
             'Restaurantes, empleados, roles, inventario y configuración de toda la cadena.',
@@ -173,7 +173,7 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                         ],
                       ),
                     ),
-                    Icon(Icons.chevron_right_rounded, color: c.primary),
+                    Icon(Icons.chevron_right_rounded, color: c.primaryInk),
                   ],
                 ),
               ),

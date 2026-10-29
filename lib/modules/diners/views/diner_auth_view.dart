@@ -202,7 +202,7 @@ class _DinerAuthViewState extends State<DinerAuthView> {
             ),
             if (diner.hasTable)
               TextButton(
-                style: TextButton.styleFrom(minimumSize: const Size(0, 44), foregroundColor: c.primary),
+                style: TextButton.styleFrom(minimumSize: const Size(0, 44), foregroundColor: c.primaryInk),
                 onPressed: _continueAsGuest,
                 child: const Text('Prefiero seguir como invitado', style: TextStyle(fontWeight: FontWeight.w600)),
               ),
@@ -311,7 +311,7 @@ class _AuthLayout extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        Text(title, textAlign: TextAlign.center, style: AppFonts.headline(fontSize: 26, color: c.onSurface)),
+                        Text(title, textAlign: TextAlign.center, style: AppFonts.title(fontSize: 30, color: c.heading)),
                         if (subtitle != null) ...[
                           const SizedBox(height: 8),
                           Text(subtitle!, textAlign: TextAlign.center, style: TextStyle(fontSize: 14, color: c.onSurfaceVariant)),
@@ -342,7 +342,7 @@ class _AuthLayout extends StatelessWidget {
                             children: [
                               Text('¿Tienes un restaurante?', style: TextStyle(fontSize: 14, color: c.onSurfaceVariant)),
                               TextButton(
-                                style: TextButton.styleFrom(minimumSize: const Size(0, 44), foregroundColor: c.primary),
+                                style: TextButton.styleFrom(minimumSize: const Size(0, 44), foregroundColor: c.primaryInk),
                                 onPressed: () => context.go(register ? Routes.register : Routes.login),
                                 child: const Text('Entra como dueño', style: TextStyle(fontWeight: FontWeight.w600)),
                               ),

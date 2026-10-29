@@ -125,7 +125,7 @@ class CheckoutTitle extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ?leading,
-        Text(title, style: AppFonts.headline(fontSize: 28, color: c.onSurface, height: 1.2)),
+        Text(title, style: AppFonts.title(fontSize: 28, color: c.heading, height: 1.2)),
         if (subtitle != null && subtitle!.isNotEmpty) ...[
           const SizedBox(height: 4),
           Text(subtitle!, style: TextStyle(fontSize: 14, color: c.onSurfaceVariant)),

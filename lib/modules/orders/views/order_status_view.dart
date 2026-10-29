@@ -22,6 +22,7 @@ import '../api.dart';
 import '../order_status_labels.dart';
 import '../rounds.dart';
 import '../types.dart';
+import '../../../widgets/base/page_header.dart';
 
 /// Seguimiento del pedido del comensal (/orders/:attentionId). Se actualiza cada 6 s.
 class OrderStatusView extends StatefulWidget {
@@ -273,10 +274,11 @@ class _OrderStatusViewState extends State<OrderStatusView> {
     final rounds = groupByRound(_products);
     final summary = _summary;
     final isMyTable = _isMyTable(diner);
-    final (Color summaryBg, Color summaryFg) = switch (summary.tone) {
-      'success' => (c.successContainer, c.onSuccessContainer),
-      'progress' => (c.primaryFixed, c.onPrimaryFixed),
-      _ => (c.surfaceContainer, c.onSurface),
+    // "En preparación" va como bloque azul petróleo, con el punto en el acento verde.
+    final (Color summaryBg, Color summaryFg, Color summaryDot) = switch (summary.tone) {
+      'success' => (c.successContainer, c.onSuccessContainer, c.onSuccessContainer),
+      'progress' => (c.deep, c.onDeep, c.deepAccent),
+      _ => (c.surfaceContainer, c.onSurface, c.onSurface),
     };
 
     return RefreshIndicator(
@@ -296,7 +298,7 @@ class _OrderStatusViewState extends State<OrderStatusView> {
                       'Mesa ${attention.tableNumber}',
                       style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: c.onSurfaceVariant),
                     ),
-                    Text('Tu pedido', style: AppFonts.headline(fontSize: 26, color: c.onSurface)),
+                    const HeadingText('Tu ', accent: 'pedido', fontSize: 36, height: 1.05),
                   ],
                 ),
               ),
@@ -313,10 +315,16 @@ class _OrderStatusViewState extends State<OrderStatusView> {
               liveRegion: true,
               child: Container(
                 padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(color: summaryBg, borderRadius: BorderRadius.circular(24)),
+                decoration: BoxDecoration(
+                  color: summaryBg,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: summary.tone == 'progress'
+                      ? const [BoxShadow(color: Color(0x33000000), blurRadius: 16, offset: Offset(0, 6))]
+                      : null,
+                ),
                 child: Row(
                   children: [
-                    _PulseDot(color: summaryFg, animate: summary.tone != 'waiting'),
+                    _PulseDot(color: summaryDot, animate: summary.tone != 'waiting'),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(

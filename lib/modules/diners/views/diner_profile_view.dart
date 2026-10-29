@@ -268,7 +268,7 @@ class _DinerProfileViewState extends State<DinerProfileView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('CLIENTE', style: AppFonts.eyebrow(color: c.tertiary)),
-                    Text(profile.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppFonts.headline(fontSize: 24, color: c.onSurface)),
+                    Text(profile.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppFonts.title(fontSize: 24, color: c.heading)),
                     Text(
                       profile.createdAt != null ? '${profile.email} · Desde ${formatMonthYear(profile.createdAt!)}' : profile.email,
                       maxLines: 1,
@@ -323,8 +323,8 @@ class _DinerProfileViewState extends State<DinerProfileView> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Row(
                       children: [
-                        Expanded(child: Text('Ver mis visitas', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: c.primary))),
-                        Icon(Icons.arrow_forward_rounded, size: 18, color: c.primary),
+                        Expanded(child: Text('Ver mis visitas', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: c.primaryInk))),
+                        Icon(Icons.arrow_forward_rounded, size: 18, color: c.primaryInk),
                       ],
                     ),
                   ),

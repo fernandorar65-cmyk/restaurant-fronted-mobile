@@ -360,7 +360,7 @@ class _ExpenseCategoriesDialogState extends State<ExpenseCategoriesDialog> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                             side: BorderSide(
-                              color: _icon == icon ? c.primary : c.outlineVariant.withValues(alpha: 0.5),
+                              color: _icon == icon ? c.primaryInk : c.outlineVariant.withValues(alpha: 0.5),
                               width: _icon == icon ? 2 : 1,
                             ),
                           ),
@@ -370,7 +370,7 @@ class _ExpenseCategoriesDialogState extends State<ExpenseCategoriesDialog> {
                             child: SizedBox(
                               width: 44,
                               height: 44,
-                              child: Icon(expenseIconData(icon), size: 20, color: _icon == icon ? c.primary : c.onSurfaceVariant),
+                              child: Icon(expenseIconData(icon), size: 20, color: _icon == icon ? c.primaryInk : c.onSurfaceVariant),
                             ),
                           ),
                         ),

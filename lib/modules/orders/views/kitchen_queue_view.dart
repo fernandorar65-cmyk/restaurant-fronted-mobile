@@ -217,7 +217,7 @@ class _KitchenQueueViewState extends State<KitchenQueueView> {
               if (_actionError != null) ...[InlineAlert(_actionError!), const SizedBox(height: 16)],
               Row(
                 children: [
-                  Text('En preparación', style: AppFonts.headline(fontSize: 22, color: c.onSurface)),
+                  Text('En preparación', style: AppFonts.title(fontSize: 22, color: c.heading)),
                   const SizedBox(width: 8),
                   Pill('${_items.length}', background: c.primaryFixed, foreground: c.onPrimaryFixed),
                 ],
@@ -265,7 +265,7 @@ class _KitchenQueueViewState extends State<KitchenQueueView> {
               children: [
                 TextSpan(
                   text: '${item.product.quantity}× ',
-                  style: TextStyle(color: c.primary),
+                  style: TextStyle(color: c.primaryInk),
                 ),
                 TextSpan(text: item.product.name),
               ],

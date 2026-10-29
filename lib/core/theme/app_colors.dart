@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-/// Tokens de color del front web (`src/assets/main.css`), claro y oscuro.
+/// Tokens de color de la app (estilo Spenza: verde esmeralda y azul petróleo), claro y oscuro.
+/// Mismos valores que el front web (`src/assets/main.css`).
 /// Uso: `context.colors.primary`, `context.colors.surfaceContainerLow`…
 @immutable
 class AppColors extends ThemeExtension<AppColors> {
@@ -44,6 +45,12 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.onWarning,
     required this.warningContainer,
     required this.onWarningContainer,
+    required this.primaryInk,
+    required this.heading,
+    required this.headingAccent,
+    required this.deep,
+    required this.onDeep,
+    required this.deepAccent,
   });
 
   final Color background;
@@ -86,35 +93,45 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color onWarning;
   final Color warningContainer;
   final Color onWarningContainer;
+  // [primary] solo sirve como relleno (2,15:1 sobre blanco); para texto, íconos y bordes en verde va [primaryInk].
+  final Color primaryInk;
+  // Títulos de página y de sección, y la palabra destacada en verde dentro de un título.
+  final Color heading;
+  final Color headingAccent;
+  // Bloques azul petróleo: fondo, texto y acento verde sobre ese fondo.
+  final Color deep;
+  final Color onDeep;
+  final Color deepAccent;
 
+  // Estilo Spenza: verde esmeralda (solo relleno), azul petróleo y neutros limpios sin tinte.
   static const light = AppColors(
-    background: Color(0xFFFAF9FA),
-    surface: Color(0xFFFAF9FA),
-    surfaceBright: Color(0xFFFAF9FA),
+    background: Color(0xFFF6F8F8),
+    surface: Color(0xFFF6F8F8),
+    surfaceBright: Color(0xFFF6F8F8),
     surfaceContainerLowest: Color(0xFFFFFFFF),
-    surfaceContainerLow: Color(0xFFF5F3F4),
-    surfaceContainer: Color(0xFFEFEDEE),
-    surfaceContainerHigh: Color(0xFFE9E8E9),
-    surfaceContainerHighest: Color(0xFFE3E2E3),
-    surfaceDim: Color(0xFFDBDADB),
-    onSurface: Color(0xFF1B1C1D),
-    onSurfaceVariant: Color(0xFF434653),
-    secondary: Color(0xFF5A5F63),
-    secondaryContainer: Color(0xFFDFE3E8),
-    onSecondaryContainer: Color(0xFF606569),
-    outline: Color(0xFF737784),
-    outlineVariant: Color(0xFFC3C6D5),
-    primary: Color(0xFF094CB2),
-    primaryContainer: Color(0xFF3366CC),
-    onPrimary: Color(0xFFFFFFFF),
-    onPrimaryContainer: Color(0xFFE7EBFF),
-    tertiary: Color(0xFF6D5E00),
-    tertiaryContainer: Color(0xFFBFAB49),
-    onTertiaryContainer: Color(0xFF4A3F00),
-    primaryFixed: Color(0xFFD9E2FF),
-    primaryFixedDim: Color(0xFFB1C5FF),
-    onPrimaryFixed: Color(0xFF001946),
-    tertiaryFixed: Color(0xFFF9E37A),
+    surfaceContainerLow: Color(0xFFF0F3F3),
+    surfaceContainer: Color(0xFFE9EEEE),
+    surfaceContainerHigh: Color(0xFFE2E8E8),
+    surfaceContainerHighest: Color(0xFFDBE2E3),
+    surfaceDim: Color(0xFFD3DBDC),
+    onSurface: Color(0xFF0F2430),
+    onSurfaceVariant: Color(0xFF4A5C67),
+    secondary: Color(0xFF4F6170),
+    secondaryContainer: Color(0xFFDDE6E8),
+    onSecondaryContainer: Color(0xFF3C4D57),
+    outline: Color(0xFF6F7F86),
+    outlineVariant: Color(0xFFCDD6D8),
+    primary: Color(0xFF00CA83),
+    primaryContainer: Color(0xFF00B373),
+    onPrimary: Color(0xFF0B3549),
+    onPrimaryContainer: Color(0xFF0B3549),
+    tertiary: Color(0xFF9A5B00),
+    tertiaryContainer: Color(0xFFF5B74E),
+    onTertiaryContainer: Color(0xFF4A2C00),
+    primaryFixed: Color(0xFFD4F7E8),
+    primaryFixedDim: Color(0xFF7FE5BF),
+    onPrimaryFixed: Color(0xFF00573A),
+    tertiaryFixed: Color(0xFFFFE2B0),
     error: Color(0xFFBA1A1A),
     onError: Color(0xFFFFFFFF),
     errorContainer: Color(0xFFFFDAD6),
@@ -127,36 +144,42 @@ class AppColors extends ThemeExtension<AppColors> {
     onWarning: Color(0xFFFFFFFF),
     warningContainer: Color(0xFFFFE3B8),
     onWarningContainer: Color(0xFF4F2F00),
+    primaryInk: Color(0xFF007A52),
+    heading: Color(0xFF155983),
+    headingAccent: Color(0xFF009E64),
+    deep: Color(0xFF0B3549),
+    onDeep: Color(0xFFFFFFFF),
+    deepAccent: Color(0xFF00CA83),
   );
 
   static const dark = AppColors(
-    background: Color(0xFF111316),
-    surface: Color(0xFF16181C),
-    surfaceBright: Color(0xFF2A2D33),
-    surfaceContainerLowest: Color(0xFF1D2025),
-    surfaceContainerLow: Color(0xFF22252B),
-    surfaceContainer: Color(0xFF2A2D33),
-    surfaceContainerHigh: Color(0xFF33373E),
-    surfaceContainerHighest: Color(0xFF3D414A),
-    surfaceDim: Color(0xFF111316),
-    onSurface: Color(0xFFF1F1F4),
-    onSurfaceVariant: Color(0xFFC4C7D2),
-    secondary: Color(0xFFC3C7CC),
-    secondaryContainer: Color(0xFF3F4448),
-    onSecondaryContainer: Color(0xFFDFE3E8),
-    outline: Color(0xFF8E919C),
-    outlineVariant: Color(0xFF454955),
-    primary: Color(0xFFA9C4FF),
-    primaryContainer: Color(0xFF2F5FBF),
-    onPrimary: Color(0xFF00255C),
-    onPrimaryContainer: Color(0xFFDBE5FF),
-    tertiary: Color(0xFFE3C757),
-    tertiaryContainer: Color(0xFF8C7A1E),
-    onTertiaryContainer: Color(0xFFFBE68A),
-    primaryFixed: Color(0xFF23396A),
-    primaryFixedDim: Color(0xFF5B7FD1),
-    onPrimaryFixed: Color(0xFFDBE5FF),
-    tertiaryFixed: Color(0xFF5A4B00),
+    background: Color(0xFF0F171C),
+    surface: Color(0xFF131C22),
+    surfaceBright: Color(0xFF2A3942),
+    surfaceContainerLowest: Color(0xFF172128),
+    surfaceContainerLow: Color(0xFF1C272E),
+    surfaceContainer: Color(0xFF223038),
+    surfaceContainerHigh: Color(0xFF2A3942),
+    surfaceContainerHighest: Color(0xFF34444E),
+    surfaceDim: Color(0xFF0F171C),
+    onSurface: Color(0xFFEAF2F5),
+    onSurfaceVariant: Color(0xFFBCCBD2),
+    secondary: Color(0xFFB9C8D2),
+    secondaryContainer: Color(0xFF2C3B44),
+    onSecondaryContainer: Color(0xFFD8E5EA),
+    outline: Color(0xFF87979F),
+    outlineVariant: Color(0xFF3C4B54),
+    primary: Color(0xFF00CA83),
+    primaryContainer: Color(0xFF00B373),
+    onPrimary: Color(0xFF0B3549),
+    onPrimaryContainer: Color(0xFF0B3549),
+    tertiary: Color(0xFFF2B95A),
+    tertiaryContainer: Color(0xFF8A5A10),
+    onTertiaryContainer: Color(0xFFFFDCA0),
+    primaryFixed: Color(0xFF0B3B2B),
+    primaryFixedDim: Color(0xFF00A56B),
+    onPrimaryFixed: Color(0xFFB5F3D9),
+    tertiaryFixed: Color(0xFF5A3C00),
     error: Color(0xFFFFB4AB),
     onError: Color(0xFF690005),
     errorContainer: Color(0xFF5C1110),
@@ -169,6 +192,12 @@ class AppColors extends ThemeExtension<AppColors> {
     onWarning: Color(0xFF3A2400),
     warningContainer: Color(0xFF5A3A00),
     onWarningContainer: Color(0xFFFFE3B8),
+    primaryInk: Color(0xFF00CA83),
+    heading: Color(0xFFDCECF5),
+    headingAccent: Color(0xFF00CA83),
+    deep: Color(0xFF145A78),
+    onDeep: Color(0xFFFFFFFF),
+    deepAccent: Color(0xFF7FF5C8),
   );
 
   @override

@@ -222,7 +222,7 @@ class _StaffProfileViewState extends State<StaffProfileView> {
                     profile.name,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: AppFonts.headline(fontSize: 24, color: c.onSurface, height: 1.2),
+                    style: AppFonts.title(fontSize: 24, color: c.heading, height: 1.2),
                   ),
                   const SizedBox(height: 2),
                   Text(

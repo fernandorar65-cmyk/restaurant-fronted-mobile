@@ -379,7 +379,7 @@ class _BoardCardTile extends StatelessWidget {
                                       minimumSize: const Size(0, 44),
                                       backgroundColor: c.primary,
                                       foregroundColor: c.onPrimary,
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                      shape: const StadiumBorder(),
                                       textStyle: AppFonts.label(fontSize: 13),
                                     ),
                                     onPressed: busy ? null : onAdvance,

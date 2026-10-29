@@ -55,7 +55,7 @@ class MenuPreviewDialog extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('VISTA DEL COMENSAL', style: AppFonts.eyebrow(color: c.primary)),
+                        Text('VISTA DEL COMENSAL', style: AppFonts.eyebrow(color: c.primaryInk)),
                         Text(menuName, style: AppFonts.headline(fontSize: 16, color: c.onSurface)),
                       ],
                     ),

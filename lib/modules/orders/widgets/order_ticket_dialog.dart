@@ -298,7 +298,7 @@ class _OrderTicketDialogState extends State<OrderTicketDialog> {
                                         children: [
                                           TextSpan(
                                             text: '${product.quantity}× ',
-                                            style: TextStyle(color: c.primary),
+                                            style: TextStyle(color: c.primaryInk),
                                           ),
                                           TextSpan(text: product.name),
                                         ],
@@ -391,7 +391,7 @@ class _OrderTicketDialogState extends State<OrderTicketDialog> {
                                 ),
                         ),
                         if (index < timeline.length - 1)
-                          Expanded(child: Container(width: 2, color: timeline[index + 1].done ? c.primary : c.outlineVariant)),
+                          Expanded(child: Container(width: 2, color: timeline[index + 1].done ? c.primaryInk : c.outlineVariant)),
                       ],
                     ),
                   ),

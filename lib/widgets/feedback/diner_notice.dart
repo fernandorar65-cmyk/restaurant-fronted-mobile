@@ -96,7 +96,7 @@ class DinerNotice extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              Text(title ?? config.title, textAlign: TextAlign.center, style: AppFonts.headline(fontSize: 20, color: c.onSurface)),
+              Text(title ?? config.title, textAlign: TextAlign.center, style: AppFonts.title(fontSize: 20, color: c.heading)),
               const SizedBox(height: 8),
               Text(message ?? config.message, textAlign: TextAlign.center, style: TextStyle(fontSize: 14, color: c.onSurfaceVariant)),
               const SizedBox(height: 16),
