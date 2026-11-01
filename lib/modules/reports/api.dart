@@ -75,7 +75,7 @@ class DailyClosingRecord {
 }
 
 Future<List<DailyClosingRecord>> fetchDailyClosings(String restaurantId) async {
-  final payload = await http('/dailyClosures');
+  final payload = await http('/dailyClosures?${whereQuery({'restaurantId': restaurantId})}');
 
   if (payload is! List) {
     return [];

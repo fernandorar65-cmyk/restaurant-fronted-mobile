@@ -61,6 +61,12 @@ class SiteActivityStore extends ChangeNotifier with WidgetsBindingObserver {
   /// Aumenta cada vez que cambia algo en la sede; las vistas lo observan para recargar.
   int revision = 0;
 
+  List<AttentionWithProducts>? _attentions;
+
+  /// Atenciones (con productos) de la última consulta, si son de la sede [id]. Las vistas del
+  /// portal las reutilizan al recargar por un cambio de [revision], en vez de pedirlas otra vez.
+  List<AttentionWithProducts>? latestAttentionsFor(String id) => restaurantId == id ? _attentions : null;
+
   Timer? _timer;
   _Seen? _seen;
   String _lastSignature = '';
@@ -78,6 +84,8 @@ class SiteActivityStore extends ChangeNotifier with WidgetsBindingObserver {
     if (restaurantId != id) {
       return;
     }
+
+    _attentions = attentions;
 
     // Solo cuenta lo que sigue en curso: lo de atenciones cerradas o canceladas ya no requiere acción.
     final products = attentions
@@ -177,6 +185,7 @@ class SiteActivityStore extends ChangeNotifier with WidgetsBindingObserver {
     stop();
     restaurantId = nextRestaurantId;
     counts = SiteActivityCounts.empty;
+    _attentions = null;
     _seen = null;
     _lastSignature = '';
     notifyListeners();

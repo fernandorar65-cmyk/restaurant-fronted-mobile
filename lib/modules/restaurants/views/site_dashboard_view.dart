@@ -111,7 +111,7 @@ class _SiteDashboardViewState extends State<SiteDashboardView> {
   void _onActivity() {
     if (_activity.revision == _lastRevision) return;
     _lastRevision = _activity.revision;
-    unawaited(_refreshAttentions());
+    unawaited(_refreshAttentions(fromActivity: true));
   }
 
   Future<void> _loadSite(RestaurantSite site) async {
@@ -133,12 +133,13 @@ class _SiteDashboardViewState extends State<SiteDashboardView> {
     _selectedTableNumber = firstOccupied?.number ?? operation.tables.firstOrNull?.number;
   }
 
-  Future<void> _refreshAttentions() async {
+  /// Con [fromActivity], reutiliza las atenciones que ya trajo `SiteActivityStore`.
+  Future<void> _refreshAttentions({bool fromActivity = false}) async {
     final id = _site.restaurantId;
     if (id == null) return;
 
     try {
-      final attentions = await fetchAttentionsWithProductsBySite(id);
+      final attentions = (fromActivity ? _activity.latestAttentionsFor(id) : null) ?? await fetchAttentionsWithProductsBySite(id);
       if (mounted) setState(() => _attentions = attentions);
     } catch (_) {
       // Se reintenta en el próximo ciclo de actividad.

@@ -104,6 +104,23 @@ Object? _readPayload(http_pkg.Response response) {
   }
 }
 
+/// Filtro exacto de json-server: `http('/attentions?${whereQuery({'restaurantId': id})}')`.
+/// Con `?campo=valor` json-server convierte "1" en número y no coincide con los ids de texto;
+/// `_where` respeta el tipo. Una lista filtra con `in` y un mapa pasa operadores tal cual
+/// (`{'date': {'gte': from, 'lte': to}}`). Ignora los demás parámetros de la URL, así que
+/// todo el filtro va aquí. Con el backend real cada consulta tendrá su endpoint.
+String whereQuery(Map<String, Object> fields) {
+  final where = {
+    for (final MapEntry(:key, :value) in fields.entries)
+      key: switch (value) {
+        List() => {'in': value},
+        Map() => value,
+        _ => {'eq': value},
+      },
+  };
+  return '_where=${Uri.encodeQueryComponent(jsonEncode(where))}';
+}
+
 /// json-server recarga db.json cada vez que termina de escribir y puede descartar un cambio
 /// que llega justo en ese momento (aunque responda 200). Cuando una acción hace varias
 /// escrituras seguidas, se espera este margen entre una y otra.

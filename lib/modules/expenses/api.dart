@@ -44,8 +44,10 @@ JsonMap _clean(ExpenseDraft draft) {
 /// Gastos de una sede entre dos fechas (inclusive), del más reciente al más antiguo.
 /// Contrato pensado para el backend: GET /restaurants/:id/expenses?from=…&to=…
 Future<List<Expense>> fetchExpenses(String restaurantId, String from, String to) async {
-  // json-server convierte "1" en número al filtrar, así que la sede se filtra aquí.
-  final payload = await http('/expenses?${encodeQuery('date:gte')}=${encodeQuery(from)}&${encodeQuery('date:lte')}=${encodeQuery(to)}');
+  final payload = await http('/expenses?${whereQuery({
+    'restaurantId': restaurantId,
+    'date': {'gte': from, 'lte': to},
+  })}');
   final rows = payload is List ? payload.where(_isExpense).map(_toExpense).toList() : <Expense>[];
   return rows.where((expense) => expense.restaurantId == restaurantId).toList()
     ..sort((a, b) => a.date == b.date ? b.createdAt.compareTo(a.createdAt) : b.date.compareTo(a.date));

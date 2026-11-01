@@ -73,7 +73,7 @@ int _compareProducts(MenuProduct a, MenuProduct b) {
 }
 
 Future<List<Menu>> fetchMenus(String restaurantId) async {
-  final payload = await http('/menus');
+  final payload = await http('/menus?${whereQuery({'restaurantId': restaurantId})}');
 
   if (payload is! List) {
     return [];
@@ -130,7 +130,7 @@ Future<List<Menu>> updateMenuStatus(Menu menu, MenuStatus status) async {
 }
 
 Future<List<MenuCategory>> fetchMenuCategories(String restaurantId) async {
-  final payload = await http('/menuCategories');
+  final payload = await http('/menuCategories?${whereQuery({'restaurantId': restaurantId})}');
 
   if (payload is! List) {
     return [];
@@ -152,7 +152,7 @@ Future<List<MenuCategory>> fetchActiveMenuCategories(String restaurantId) async 
 }
 
 Future<List<MenuProduct>> fetchMenuProducts(String restaurantId) async {
-  final payload = await http('/menuProducts');
+  final payload = await http('/menuProducts?${whereQuery({'restaurantId': restaurantId})}');
 
   if (payload is! List) {
     return [];

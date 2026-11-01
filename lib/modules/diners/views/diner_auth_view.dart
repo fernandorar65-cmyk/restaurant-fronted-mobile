@@ -11,6 +11,7 @@ import '../../../widgets/navigation/theme_menu.dart';
 import '../../auth/validation.dart';
 import '../../orders/api.dart';
 import '../api.dart';
+import '../../../widgets/base/app_logo.dart';
 
 /// Ingreso / registro del comensal (/customer/auth/login y /customer/auth/register).
 /// Pantalla completa fuera de la barra del comensal.
@@ -276,12 +277,7 @@ class _AuthLayout extends StatelessWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Container(
-                              width: 36,
-                              height: 36,
-                              decoration: BoxDecoration(color: c.primary, borderRadius: BorderRadius.circular(12)),
-                              child: Icon(Icons.menu_book_outlined, size: 20, color: c.onPrimary),
-                            ),
+                            const AppLogo(size: 36),
                             const SizedBox(width: 10),
                             Text('RentaSol', style: AppFonts.headline(fontSize: 18, color: c.onSurface)),
                           ],

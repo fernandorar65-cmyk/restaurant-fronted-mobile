@@ -137,26 +137,29 @@ class _SiteOrdersViewState extends State<SiteOrdersView> {
   void _onActivity() {
     if (_activity.revision != _lastRevision) {
       _lastRevision = _activity.revision;
-      unawaited(_reload());
+      unawaited(_reload(fromActivity: true));
     }
   }
 
   String get _staffName => context.read<SessionStore>().user?.name ?? 'Personal';
 
-  Future<void> _loadAttentions([RestaurantSite? site]) async {
+  /// [latest]: atenciones que ya trajo `SiteActivityStore` (se usan en lugar de pedirlas otra vez).
+  Future<void> _loadAttentions([RestaurantSite? site, List<AttentionWithProducts>? latest]) async {
     final id = site?.id ?? _site.restaurantId;
 
     if (id != null) {
-      final list = await fetchAttentionsWithProductsBySite(id);
+      final list = latest ?? await fetchAttentionsWithProductsBySite(id);
       if (!mounted) return;
       _attentions.value = list;
       setState(() {});
     }
   }
 
-  Future<void> _reload() async {
+  Future<void> _reload({bool fromActivity = false}) async {
+    final id = _site.restaurantId;
+
     try {
-      await _loadAttentions();
+      await _loadAttentions(null, fromActivity && id != null ? _activity.latestAttentionsFor(id) : null);
     } catch (error) {
       if (mounted) setState(() => _actionError = errorMessage(error, 'No se pudieron actualizar los pedidos.'));
     }

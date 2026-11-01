@@ -136,18 +136,24 @@ class _SiteAccountsViewState extends State<SiteAccountsView> {
   void _onActivity() {
     if (_activity.revision != _lastRevision) {
       _lastRevision = _activity.revision;
-      unawaited(_reload());
+      unawaited(_reload(fromActivity: true));
     }
   }
 
-  Future<void> _loadAccounts([RestaurantSite? site]) async {
+  /// [latest]: atenciones que ya trajo `SiteActivityStore` (se usan en lugar de pedirlas otra vez).
+  Future<void> _loadAccounts([RestaurantSite? site, List<AttentionWithProducts>? latest]) async {
     final id = site?.id ?? _site.restaurantId;
 
     if (id == null) {
       return;
     }
 
-    final results = await Future.wait<Object>([fetchAttentionsWithProductsBySite(id), fetchAllPayments(), fetchAllStatusHistory()]);
+    // Los pagos no guardan la sede: se piden todos y se filtran aquí hasta que el backend la incluya.
+    final results = await Future.wait<Object>([
+      if (latest == null) fetchAttentionsWithProductsBySite(id) else Future.value(latest),
+      fetchAllPayments(),
+      fetchAccountRequests(),
+    ]);
     final siteAttentions = results[0] as List<AttentionWithProducts>;
     final allPayments = results[1] as List<Payment>;
     final history = results[2] as List<StatusHistoryEntry>;
@@ -155,7 +161,7 @@ class _SiteAccountsViewState extends State<SiteAccountsView> {
     final requested = <String, String>{};
 
     for (final entry in history) {
-      if (entry.entityType == 'attention' && entry.toStatus == 'account-requested' && ids.contains(entry.entityId)) {
+      if (ids.contains(entry.entityId)) {
         requested[entry.entityId] = entry.changedAt;
       }
     }
@@ -168,9 +174,11 @@ class _SiteAccountsViewState extends State<SiteAccountsView> {
     _attentions.value = siteAttentions;
   }
 
-  Future<void> _reload() async {
+  Future<void> _reload({bool fromActivity = false}) async {
+    final id = _site.restaurantId;
+
     try {
-      await _loadAccounts();
+      await _loadAccounts(null, fromActivity && id != null ? _activity.latestAttentionsFor(id) : null);
     } catch (error) {
       if (mounted) setState(() => _actionError = errorMessage(error, 'No se pudieron actualizar las cuentas.'));
     }

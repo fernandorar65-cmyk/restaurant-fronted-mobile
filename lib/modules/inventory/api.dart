@@ -12,9 +12,8 @@ double _round(num value) => (value * 1000).roundToDouble() / 1000;
 double _roundCents(num value) => (value * 100).roundToDouble() / 100;
 
 /// Insumos de una sede. Backend: GET /restaurants/:id/supplies
-/// (json-server convierte "1" en número al filtrar, así que la sede se filtra aquí).
 Future<List<Supply>> fetchSupplies(String restaurantId) async {
-  final payload = await http('/inventoryItems');
+  final payload = await http('/inventoryItems?${whereQuery({'restaurantId': restaurantId})}');
   final items = asList(payload).map(Supply.tryParse).whereType<Supply>().where((item) => item.restaurantId == restaurantId).toList()
     ..sort((a, b) => normalizeSearch(a.name).compareTo(normalizeSearch(b.name)));
   return items;
@@ -63,7 +62,7 @@ Future<Supply> updateSupply(Supply item, SupplyDraft draft) async {
 
 /// Movimientos de una sede, del más reciente al más antiguo. Backend: GET /restaurants/:id/stock-movements
 Future<List<StockMovement>> fetchMovements(String restaurantId) async {
-  final payload = await http('/inventoryMovements');
+  final payload = await http('/inventoryMovements?${whereQuery({'restaurantId': restaurantId})}');
   final movements = asList(payload)
       .map(StockMovement.tryParse)
       .whereType<StockMovement>()

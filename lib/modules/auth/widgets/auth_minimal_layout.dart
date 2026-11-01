@@ -6,6 +6,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../router/routes.dart';
 import '../../../widgets/navigation/theme_menu.dart';
 import '../brand.dart';
+import '../../../widgets/base/app_logo.dart';
 
 /// Pantalla de acceso común a clientes y restaurantes: misma estructura y estilo,
 /// con pestañas Ingresar / Crear cuenta y un enlace para cambiar de tipo de cuenta.
@@ -216,12 +217,7 @@ class _Hero extends StatelessWidget {
                       padding: const EdgeInsets.all(4),
                       child: Row(
                         children: [
-                          Container(
-                            width: 36,
-                            height: 36,
-                            decoration: BoxDecoration(color: c.primary, borderRadius: BorderRadius.circular(12)),
-                            child: Icon(Icons.menu_book_outlined, size: 20, color: c.onPrimary),
-                          ),
+                          const AppLogo(size: 36),
                           const SizedBox(width: 10),
                           Text('RentaSol', style: AppFonts.headline(fontSize: 18, color: Colors.white)),
                         ],

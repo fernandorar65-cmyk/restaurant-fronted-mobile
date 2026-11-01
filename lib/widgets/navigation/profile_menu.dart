@@ -11,8 +11,17 @@ import '../../stores/session_store.dart';
 import '../../stores/site_activity_store.dart';
 import 'avatar.dart';
 
-/// Menú de perfil del comensal: quién tiene sesión en este dispositivo
-/// (un cliente, alguien del personal, ambos o nadie) y accesos rápidos.
+enum _MenuAccount { customer, staff }
+
+/// Solo un tipo de cuenta a la vez. Si hay sesión de cliente y de personal,
+/// en el área del comensal manda la del cliente.
+_MenuAccount? _accountFor(DinerStore diner, SessionStore session) {
+  if (diner.customer != null) return _MenuAccount.customer;
+  return session.isAuthenticated ? _MenuAccount.staff : null;
+}
+
+/// Menú de perfil del comensal: muestra una sola cuenta (la del cliente o, si no hay,
+/// la del personal) con sus accesos rápidos, o la bienvenida si no hay sesión.
 class ProfileMenu extends StatelessWidget {
   const ProfileMenu({super.key});
 
@@ -20,7 +29,11 @@ class ProfileMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     final diner = context.watch<DinerStore>();
     final session = context.watch<SessionStore>();
-    final name = diner.customer?.name ?? (session.isAuthenticated ? session.user?.name : null);
+    final name = switch (_accountFor(diner, session)) {
+      _MenuAccount.customer => diner.customer?.name,
+      _MenuAccount.staff => session.user?.name,
+      null => null,
+    };
 
     return IconButton(
       tooltip: 'Perfil',
@@ -41,7 +54,7 @@ class ProfileMenu extends StatelessWidget {
         final diner = sheetContext.watch<DinerStore>();
         final session = sheetContext.watch<SessionStore>();
         final c = sheetContext.colors;
-        final hasAny = diner.customer != null || session.isAuthenticated;
+        final account = _accountFor(diner, session);
         void go(String path) {
           Navigator.of(sheetContext).pop();
           router.go(path);
@@ -57,7 +70,7 @@ class ProfileMenu extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (!hasAny) ...[
+                if (account == null) ...[
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
                     child: Column(
@@ -86,7 +99,7 @@ class ProfileMenu extends StatelessWidget {
                     onTap: () => go(Routes.restaurantLanding),
                   ),
                 ],
-                if (diner.customer != null) ...[
+                if (account == _MenuAccount.customer) ...[
                   section('Cliente'),
                   ListTile(
                     leading: InitialsAvatar(name: diner.customer!.name),
@@ -108,7 +121,7 @@ class ProfileMenu extends StatelessWidget {
                     },
                   ),
                 ],
-                if (session.isAuthenticated) ...[
+                if (account == _MenuAccount.staff) ...[
                   section('Restaurante'),
                   ListTile(leading: InitialsAvatar(name: session.user?.name), title: Text(session.user?.name ?? '')),
                   ListTile(leading: const Icon(Icons.badge_outlined), title: const Text('Mi perfil'), onTap: () => go(Routes.staffProfile)),
@@ -125,14 +138,6 @@ class ProfileMenu extends StatelessWidget {
                       context.read<SiteActivityStore>().watchSite(null);
                       session.clearAuth();
                     },
-                  ),
-                ],
-                if (hasAny && diner.customer == null) ...[
-                  const Divider(),
-                  ListTile(
-                    leading: const Icon(Icons.login_rounded),
-                    title: const Text('Ingresar como cliente'),
-                    onTap: () => go(Routes.access),
                   ),
                 ],
                 const SizedBox(height: 8),

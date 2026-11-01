@@ -10,6 +10,7 @@ import '../../../widgets/base/base_button.dart';
 import '../../../widgets/navigation/theme_menu.dart';
 import '../../auth/brand.dart';
 import '../../../widgets/base/page_header.dart';
+import '../../../widgets/base/app_logo.dart';
 
 const _nav = [
   (id: 'funciones', label: 'Funciones'),
@@ -177,12 +178,7 @@ class _RestaurantLandingViewState extends State<RestaurantLandingView> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(color: c.primary, borderRadius: BorderRadius.circular(12)),
-                    child: Icon(Icons.menu_book_outlined, size: 20, color: c.onPrimary),
-                  ),
+                  const AppLogo(size: 36),
                   const SizedBox(width: 10),
                   Text('RentaSol', style: AppFonts.title(fontSize: 18, color: c.heading)),
                 ],

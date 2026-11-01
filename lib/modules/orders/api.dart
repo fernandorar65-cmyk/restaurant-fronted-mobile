@@ -121,8 +121,8 @@ StatusHistoryEntry _toStatusHistoryEntry(Object? value) => StatusHistoryEntry.fr
 
 // ── Atenciones ──────────────────────────────────────────────────────────
 
-Future<List<Attention>> fetchAllAttentions() async {
-  final payload = await http('/attentions');
+Future<List<Attention>> _fetchAttentions([Map<String, Object>? where]) async {
+  final payload = await http(where == null ? '/attentions' : '/attentions?${whereQuery(where)}');
 
   if (payload is! List) {
     return [];
@@ -131,11 +131,11 @@ Future<List<Attention>> fetchAllAttentions() async {
   return payload.where(_isAttention).map(_toAttention).toList()..sort((a, b) => b.openedAt.compareTo(a.openedAt));
 }
 
-Future<List<Attention>> fetchAttentionsBySite(String restaurantId) async =>
-    (await fetchAllAttentions()).where((attention) => attention.restaurantId == restaurantId).toList();
+Future<List<Attention>> fetchAllAttentions() => _fetchAttentions();
 
-Future<List<Attention>> fetchAttentionsByCustomer(String customerId) async =>
-    (await fetchAllAttentions()).where((attention) => attention.customerId == customerId).toList();
+Future<List<Attention>> fetchAttentionsBySite(String restaurantId) => _fetchAttentions({'restaurantId': restaurantId});
+
+Future<List<Attention>> fetchAttentionsByCustomer(String customerId) => _fetchAttentions({'customerId': customerId});
 
 Future<Attention?> fetchAttentionById(String id) async {
   try {
@@ -350,8 +350,8 @@ Future<Attention> cancelAttention(Attention attention, String? userName, String 
 
 // ── Productos solicitados ───────────────────────────────────────────────
 
-Future<List<OrderedProduct>> fetchAllOrderedProducts() async {
-  final payload = await http('/orderedProducts');
+Future<List<OrderedProduct>> _fetchOrderedProducts([Map<String, Object>? where]) async {
+  final payload = await http(where == null ? '/orderedProducts' : '/orderedProducts?${whereQuery(where)}');
 
   if (payload is! List) {
     return [];
@@ -360,11 +360,15 @@ Future<List<OrderedProduct>> fetchAllOrderedProducts() async {
   return payload.where(_isOrderedProduct).map(_toOrderedProduct).toList()..sort((a, b) => a.requestedAt.compareTo(b.requestedAt));
 }
 
-Future<List<OrderedProduct>> fetchOrderedProductsBySite(String restaurantId) async =>
-    (await fetchAllOrderedProducts()).where((product) => product.restaurantId == restaurantId).toList();
+Future<List<OrderedProduct>> fetchAllOrderedProducts() => _fetchOrderedProducts();
 
-Future<List<OrderedProduct>> fetchOrderedProductsByAttention(String attentionId) async =>
-    (await fetchAllOrderedProducts()).where((product) => product.attentionId == attentionId).toList();
+Future<List<OrderedProduct>> fetchOrderedProductsBySite(String restaurantId) => _fetchOrderedProducts({'restaurantId': restaurantId});
+
+Future<List<OrderedProduct>> fetchOrderedProductsByAttention(String attentionId) => _fetchOrderedProducts({'attentionId': attentionId});
+
+/// Productos de varias atenciones en una sola consulta.
+Future<List<OrderedProduct>> fetchOrderedProductsByAttentions(List<String> attentionIds) async =>
+    attentionIds.isEmpty ? [] : _fetchOrderedProducts({'attentionId': attentionIds});
 
 Future<List<AttentionWithProducts>> fetchAttentionsWithProductsBySite(String restaurantId) async {
   final (attentions, products) = await _both(fetchAttentionsBySite(restaurantId), fetchOrderedProductsBySite(restaurantId));
@@ -613,8 +617,8 @@ Future<void> _postStatusHistory(
   );
 }
 
-Future<List<StatusHistoryEntry>> fetchAllStatusHistory() async {
-  final payload = await http('/statusHistory');
+Future<List<StatusHistoryEntry>> _fetchStatusHistory([Map<String, Object>? where]) async {
+  final payload = await http(where == null ? '/statusHistory' : '/statusHistory?${whereQuery(where)}');
 
   if (payload is! List) {
     return [];
@@ -623,13 +627,22 @@ Future<List<StatusHistoryEntry>> fetchAllStatusHistory() async {
   return payload.where(_isStatusHistoryEntry).map(_toStatusHistoryEntry).toList()..sort((a, b) => a.changedAt.compareTo(b.changedAt));
 }
 
-Future<List<StatusHistoryEntry>> fetchStatusHistory(StatusHistoryEntityType entityType, String entityId) async =>
-    (await fetchAllStatusHistory()).where((entry) => entry.entityType == entityType && entry.entityId == entityId).toList();
+Future<List<StatusHistoryEntry>> fetchAllStatusHistory() => _fetchStatusHistory();
+
+Future<List<StatusHistoryEntry>> fetchStatusHistory(StatusHistoryEntityType entityType, String entityId) =>
+    _fetchStatusHistory({'entityType': entityType, 'entityId': entityId});
+
+/// Historial de varios productos solicitados en una sola consulta.
+Future<List<StatusHistoryEntry>> fetchOrderedProductsHistory(List<String> productIds) async =>
+    productIds.isEmpty ? [] : _fetchStatusHistory({'entityType': 'orderedProduct', 'entityId': productIds});
+
+/// Solicitudes de cuenta de todas las atenciones (para saber desde cuándo espera cada mesa).
+Future<List<StatusHistoryEntry>> fetchAccountRequests() => _fetchStatusHistory({'entityType': 'attention', 'toStatus': 'account-requested'});
 
 /// Historial de la atención y de todos sus productos, en orden cronológico.
 Future<List<StatusHistoryEntry>> fetchAttentionTimeline(String attentionId, List<String> productIds) async {
   final ids = productIds.toSet();
-  return (await fetchAllStatusHistory())
+  return (await _fetchStatusHistory({'entityId': [attentionId, ...productIds]}))
       .where(
         (entry) =>
             (entry.entityType == 'attention' && entry.entityId == attentionId) ||

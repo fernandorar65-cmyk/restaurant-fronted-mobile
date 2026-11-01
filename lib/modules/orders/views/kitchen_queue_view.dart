@@ -96,34 +96,39 @@ class _KitchenQueueViewState extends State<KitchenQueueView> {
   void _onActivity() {
     if (_activity.revision != _lastRevision) {
       _lastRevision = _activity.revision;
-      unawaited(_reload());
+      unawaited(_reload(fromActivity: true));
     }
   }
 
   String get _staffName => context.read<SessionStore>().user?.name ?? 'Cocina';
 
-  Future<void> _loadQueue([RestaurantSite? site]) async {
+  /// [latest]: atenciones que ya trajo `SiteActivityStore` (se usan en lugar de pedirlas otra vez).
+  Future<void> _loadQueue([RestaurantSite? site, List<AttentionWithProducts>? latest]) async {
     final id = site?.id ?? _site.restaurantId;
 
     if (id == null) {
       return;
     }
 
-    final results = await Future.wait<Object>([fetchAttentionsWithProductsBySite(id), fetchAllStatusHistory()]);
-    final attentions = results[0] as List<AttentionWithProducts>;
-    final since = statusSinceMap(results[1] as List<StatusHistoryEntry>);
-    final items = [
+    final attentions = latest ?? await fetchAttentionsWithProductsBySite(id);
+    final preparing = [
       for (final attention in attentions.where(isAttentionActive))
-        for (final product in attention.products.where((product) => product.status == 'preparing'))
-          _KitchenItem(product: product, tableNumber: attention.tableNumber, since: since[product.id] ?? product.requestedAt),
+        for (final product in attention.products.where((product) => product.status == 'preparing')) (product: product, table: attention.tableNumber),
+    ];
+    // Solo el historial de lo que está en preparación, no el de toda la cadena.
+    final since = statusSinceMap(await fetchOrderedProductsHistory([for (final item in preparing) item.product.id]));
+    final items = [
+      for (final item in preparing) _KitchenItem(product: item.product, tableNumber: item.table, since: since[item.product.id] ?? item.product.requestedAt),
     ]..sort((a, b) => a.since.compareTo(b.since));
 
     if (mounted) setState(() => _items = items);
   }
 
-  Future<void> _reload() async {
+  Future<void> _reload({bool fromActivity = false}) async {
+    final id = _site.restaurantId;
+
     try {
-      await _loadQueue();
+      await _loadQueue(null, fromActivity && id != null ? _activity.latestAttentionsFor(id) : null);
     } catch (error) {
       if (mounted) setState(() => _actionError = errorMessage(error, 'No se pudo actualizar la cola.'));
     }

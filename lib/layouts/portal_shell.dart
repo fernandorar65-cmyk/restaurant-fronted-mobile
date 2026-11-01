@@ -14,6 +14,7 @@ import '../stores/site_activity_store.dart';
 import '../stores/toast_store.dart';
 import '../widgets/navigation/avatar.dart';
 import '../widgets/navigation/theme_menu.dart';
+import '../widgets/base/app_logo.dart';
 
 final RegExp _siteSlugPattern = RegExp(r'^/owner/sede/([^/]+)');
 
@@ -118,12 +119,7 @@ class _PortalShellState extends State<PortalShell> {
           onTap: () => context.go(landingRouteFor(session.user)),
           child: Row(
             children: [
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(color: c.primary, borderRadius: BorderRadius.circular(12)),
-                child: Icon(Icons.restaurant_rounded, size: 18, color: c.onPrimary),
-              ),
+              const AppLogo(size: 36),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(

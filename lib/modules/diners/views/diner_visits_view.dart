@@ -49,14 +49,10 @@ class _DinerVisitsViewState extends State<DinerVisitsView> {
     setState(() => _loadError = null);
 
     try {
-      final results = await Future.wait<Object>([
-        fetchAttentionsByCustomer(customer.id),
-        fetchAllOrderedProducts(),
-        fetchRestaurants(),
-      ]);
+      final results = await Future.wait<Object>([fetchAttentionsByCustomer(customer.id), fetchRestaurants()]);
       final attentions = results[0] as List<Attention>;
-      final products = results[1] as List<OrderedProduct>;
-      final restaurants = results[2] as List<RestaurantSite>;
+      final restaurants = results[1] as List<RestaurantSite>;
+      final products = await fetchOrderedProductsByAttentions([for (final attention in attentions) attention.id]);
 
       final visits = attentions.map((attention) {
         RestaurantSite? restaurant;

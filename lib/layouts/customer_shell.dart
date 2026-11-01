@@ -9,6 +9,7 @@ import '../stores/cart_store.dart';
 import '../stores/diner_store.dart';
 import '../widgets/navigation/profile_menu.dart';
 import '../widgets/navigation/theme_menu.dart';
+import '../widgets/base/app_logo.dart';
 
 /// Layout del comensal: barra superior con la sede y la mesa, contenido y navegación inferior.
 class CustomerShell extends StatelessWidget {
@@ -38,12 +39,7 @@ class CustomerShell extends StatelessWidget {
           onTap: () => context.go(Routes.home),
           child: Row(
             children: [
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(color: c.primary, borderRadius: BorderRadius.circular(12)),
-                child: Icon(Icons.menu_book_outlined, size: 18, color: c.onPrimary),
-              ),
+              const AppLogo(size: 36),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
@@ -108,15 +104,15 @@ class CustomerShell extends StatelessWidget {
         selectedIcon: Icons.menu_book_rounded,
         matches: (path) => path == Routes.home || RegExp(r'^/[^/]+/menu$').hasMatch(path),
       ),
-      if (diner.isReadyToOrder || cart.itemCount > 0)
-        _NavItem(
-          label: 'Carrito',
-          to: Routes.cart,
-          icon: Icons.shopping_bag_outlined,
-          selectedIcon: Icons.shopping_bag_rounded,
-          badge: cart.itemCount,
-          matches: (path) => path == Routes.cart,
-        ),
+      // Siempre visible; sin productos, la pantalla del carrito muestra su estado vacío.
+      _NavItem(
+        label: 'Carrito',
+        to: Routes.cart,
+        icon: Icons.shopping_bag_outlined,
+        selectedIcon: Icons.shopping_bag_rounded,
+        badge: cart.itemCount,
+        matches: (path) => path == Routes.cart,
+      ),
       if (diner.attentionId != null) ...[
         _NavItem(
           label: 'Mi pedido',

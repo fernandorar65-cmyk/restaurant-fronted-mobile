@@ -60,6 +60,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.8
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -82,6 +84,9 @@ flutter:
 
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/to/asset-from-package
+
+  assets:
+    - assets/branding/logo.png
 
   # Poppins (alternativa gratuita a Galano Grotesque, la fuente de Spenza). Licencia: assets/fonts/OFL.txt
   fonts:
@@ -117,3 +122,27 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+# Ícono de la app: `dart run flutter_launcher_icons` regenera iOS, Android y web desde assets/branding/.
+flutter_launcher_icons:
+  image_path: assets/branding/app_icon.png
+  ios: true
+  remove_alpha_ios: true
+  android: true
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: assets/branding/app_icon_foreground.png
+  web:
+    generate: true
+    image_path: assets/branding/app_icon.png
+    background_color: "#FFFFFF"
+    theme_color: "#00CA83"
+
+# Pantalla de carga nativa (antes del primer frame de Flutter): `dart run flutter_native_splash:create`.
+# El logo queda a 120 pt, el mismo tamaño con el que arranca la animación de lib/widgets/feedback/splash_screen.dart.
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/branding/splash_logo.png
+  android_12:
+    color: "#FFFFFF"
+    image: assets/branding/splash_android12.png
+  web: false

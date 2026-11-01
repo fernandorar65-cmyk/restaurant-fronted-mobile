@@ -41,8 +41,8 @@ bool _isPayment(Object? value) {
 
 Payment _toPayment(Object? value) => Payment.fromJson(asMap(value));
 
-Future<List<Payment>> fetchAllPayments() async {
-  final payload = await http('/payments');
+Future<List<Payment>> _fetchPayments([Map<String, Object>? where]) async {
+  final payload = await http(where == null ? '/payments' : '/payments?${whereQuery(where)}');
 
   if (payload is! List) {
     return [];
@@ -51,8 +51,13 @@ Future<List<Payment>> fetchAllPayments() async {
   return payload.where(_isPayment).map(_toPayment).toList()..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 }
 
-Future<List<Payment>> fetchPaymentsByAttention(String attentionId) async =>
-    (await fetchAllPayments()).where((payment) => payment.attentionId == attentionId).toList();
+Future<List<Payment>> fetchAllPayments() => _fetchPayments();
+
+Future<List<Payment>> fetchPaymentsByAttention(String attentionId) => _fetchPayments({'attentionId': attentionId});
+
+/// Pagos de varias atenciones en una sola consulta.
+Future<List<Payment>> fetchPaymentsByAttentions(List<String> attentionIds) async =>
+    attentionIds.isEmpty ? [] : _fetchPayments({'attentionId': attentionIds});
 
 /// Registra un pago validando contra el estado actual en el servidor:
 /// no supera el saldo pendiente, ni lo pendiente de cada producto asignado,
