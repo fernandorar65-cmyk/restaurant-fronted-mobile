@@ -9,12 +9,12 @@ class AppConfig {
 
   static const String _fromEnvironment = String.fromEnvironment('API_BASE_URL');
 
-  static const String _apiEnvironment = String.fromEnvironment('API_ENV', defaultValue: 'local');
+  static const String _apiEnvironment = String.fromEnvironment('API_ENV', defaultValue: 'production');
   static const String _productionUrl =
       'https://restaurant-api-demo-huf9eucheyg3a9de.westus2-01.azurewebsites.net';
 
-  /// Sin `API_BASE_URL`: el emulador de Android llega al localhost de la máquina por
-  /// 10.0.2.2; el simulador de iOS, la web y el escritorio usan localhost directamente.
+  /// Azure es el destino por defecto. En modo local, Android emulado usa
+  /// 10.0.2.2 y las demás plataformas usan localhost.
   static String get apiBaseUrl {
     if (_fromEnvironment.isNotEmpty) {
       return _fromEnvironment.replaceFirst(RegExp(r'/+$'), '');

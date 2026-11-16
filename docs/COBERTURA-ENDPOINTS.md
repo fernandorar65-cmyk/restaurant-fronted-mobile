@@ -4,20 +4,20 @@ Referencia analizada: `restaurant-frontend/docs/endpoints/endpoints.md`.
 
 El inventario compara método HTTP y patrón de ruta en el código fuente. Una coincidencia indica que existe una llamada y requiere verificar parámetros, autenticación, cuerpos y respuestas. La revisión es estática.
 
-- 40 de 214 endpoints tienen una llamada localizada por método y ruta.
-- 174 de 214 endpoints quedan sin llamada localizada.
+- 48 de 214 endpoints tienen una llamada localizada por método y ruta.
+- 166 de 214 endpoints quedan sin llamada localizada.
 
-La app del comensal sigue consultando `/customers` y colecciones del mock. En el panel quedan rutas como `/menuProducts`, `/inventoryItems` y `/expenseCategories`. Los listados deben adoptar `items` y `meta`, y cada operación debe enviar el alcance por sede u organización que indica el contrato.
+La cuenta del comensal usa la sesión, el perfil y el historial de NestJS. El flujo de mesa y pedidos conserva llamadas al mock. En el panel quedan rutas como `/menuProducts`, `/inventoryItems` y `/expenseCategories`. Los listados deben adoptar `items` y `meta`, y cada operación debe enviar el alcance por sede u organización que indica el contrato.
 
 
 ## Autenticación del comensal
 
 | Endpoint | Llamada en Flutter |
 | --- | --- |
-| `POST /api/v1/customer/auth/register` | Sin llamada localizada |
-| `POST /api/v1/customer/auth/login` | Sin llamada localizada |
-| `POST /api/v1/customer/auth/refresh` | Sin llamada localizada |
-| `POST /api/v1/customer/auth/logout` | Sin llamada localizada |
+| `POST /api/v1/customer/auth/register` | [lib/modules/diners/api.dart:20](../lib/modules/diners/api.dart#L20) |
+| `POST /api/v1/customer/auth/login` | [lib/modules/diners/api.dart:17](../lib/modules/diners/api.dart#L17) |
+| `POST /api/v1/customer/auth/refresh` | [lib/stores/diner_store.dart:273](../lib/stores/diner_store.dart#L273) |
+| `POST /api/v1/customer/auth/logout` | [lib/stores/diner_store.dart:234](../lib/stores/diner_store.dart#L234) |
 | `POST /api/v1/customer/auth/forgot-password` | Sin llamada localizada |
 | `POST /api/v1/customer/auth/reset-password` | Sin llamada localizada |
 
@@ -25,10 +25,10 @@ La app del comensal sigue consultando `/customers` y colecciones del mock. En el
 
 | Endpoint | Llamada en Flutter |
 | --- | --- |
-| `GET /api/v1/customer/me` | Sin llamada localizada |
-| `PATCH /api/v1/customer/me` | Sin llamada localizada |
-| `PATCH /api/v1/customer/me/password` | Sin llamada localizada |
-| `GET /api/v1/customer/me/attentions` | Sin llamada localizada |
+| `GET /api/v1/customer/me` | [lib/modules/diners/api.dart:55](../lib/modules/diners/api.dart#L55) |
+| `PATCH /api/v1/customer/me` | [lib/modules/diners/api.dart:58](../lib/modules/diners/api.dart#L58) |
+| `PATCH /api/v1/customer/me/password` | [lib/modules/diners/api.dart:68](../lib/modules/diners/api.dart#L68) |
+| `GET /api/v1/customer/me/attentions` | [lib/modules/diners/api.dart:75](../lib/modules/diners/api.dart#L75) |
 
 ## Sedes y carta
 

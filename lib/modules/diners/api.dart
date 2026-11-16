@@ -1,124 +1,86 @@
 import '../../core/http/http_client.dart';
 import '../../core/utils/json.dart';
-import '../../core/utils/time.dart';
 import '../../stores/diner_store.dart';
 import 'types.dart';
 
-/// Registro de `/customers` tal cual lo guarda json-server (incluye la contraseña).
-class _JsonCustomer {
-  const _JsonCustomer(this.raw);
+const _auth = '/api/v1/customer/auth';
+const _me = '/api/v1/customer/me';
 
-  final JsonMap raw;
+String _name(JsonMap data) =>
+    [asString(data['firstName']), asString(data['lastName'])].where((part) => part.isNotEmpty).join(' ');
 
-  String get email => raw['email'] as String;
-  String get password => raw['password'] as String;
+JsonMap _nameFields(String name) {
+  final parts = name.trim().split(RegExp(r'\s+'));
+  return {'firstName': parts.first, 'lastName': parts.skip(1).join(' ')};
 }
 
-bool _isJsonCustomer(Object? value) {
-  if (value is! Map) {
-    return false;
+Future<void> loginCustomer(DinerStore diner, String email, String password) =>
+    _startSession(diner, 'login', {'email': email.trim().toLowerCase(), 'password': password});
+
+Future<void> registerCustomer(DinerStore diner, String name, String email, String password) =>
+    _startSession(diner, 'register', {
+      ..._nameFields(name),
+      'email': email.trim().toLowerCase(),
+      'password': password,
+    });
+
+Future<void> _startSession(DinerStore diner, String action, JsonMap body) async {
+  final data = asMap(await http('$_auth/$action', method: 'POST', body: body, authenticated: false));
+  final user = asMap(data['user']);
+  final access = asString(data['accessToken']);
+  final refresh = asString(data['refreshToken']);
+  if (access.isEmpty || refresh.isEmpty || asId(user['id']).isEmpty) {
+    throw HttpError('Respuesta de sesión inesperada', 500);
   }
-
-  return (value['id'] is String || value['id'] is num) &&
-      value['name'] is String &&
-      value['email'] is String &&
-      value['password'] is String;
+  diner.startCustomerSession(
+    DinerCustomer.fromJson({...user, 'name': _name(user)}),
+    accessToken: access,
+    refreshToken: refresh,
+  );
 }
 
-DinerCustomer _toCustomer(_JsonCustomer value) => DinerCustomer.fromJson(value.raw);
-
-String _normalizeEmail(String email) => email.trim().toLowerCase();
-
-Future<List<_JsonCustomer>> _findCustomers(String email) async {
-  final payload = await http('/customers?email=${encodeQuery(email)}');
-  return payload is List ? payload.where(_isJsonCustomer).map((item) => _JsonCustomer(asMap(item))).toList() : [];
-}
-
-/// Cuenta opcional del comensal. Es independiente de las cuentas del personal.
-Future<DinerCustomer> loginCustomer(String email, String password) async {
-  final normalized = _normalizeEmail(email);
-  final customers = await _findCustomers(normalized);
-
-  for (final customer in customers) {
-    if (_normalizeEmail(customer.email) == normalized && customer.password == password) {
-      return _toCustomer(customer);
-    }
-  }
-
-  throw HttpError('Correo o contraseña incorrectos', 401);
-}
-
-Future<DinerCustomer> registerCustomer(String name, String email, String password) async {
-  final normalized = _normalizeEmail(email);
-
-  if ((await _findCustomers(normalized)).isNotEmpty) {
-    throw HttpError('Ya existe una cuenta con este correo', 409);
-  }
-
-  final created = await http('/customers', method: 'POST', body: {
-    'name': name.trim(),
-    'email': normalized,
-    'password': password,
-    'phone': null,
-    'birthday': null,
-    'dietaryPreferences': <String>[],
-    'allergens': <String>[],
-    'marketingOptIn': false,
-    'createdAt': nowIso(),
+CustomerProfile _profile(Object? response) {
+  final data = asMap(response);
+  List<String> list(Object? value) => asString(value).split(',').map((part) => part.trim())
+      .where((part) => part.isNotEmpty).toList();
+  return CustomerProfile.fromJson({
+    ...data,
+    'name': _name(data),
+    'birthday': data['birthDate'],
+    'dietaryPreferences': list(data['dietaryPreferences']),
+    'allergens': list(data['allergies']),
   });
-
-  if (!_isJsonCustomer(created)) {
-    throw HttpError('No se pudo crear la cuenta', 500);
-  }
-
-  return _toCustomer(_JsonCustomer(asMap(created)));
 }
 
-CustomerProfile _toProfile(_JsonCustomer value) => CustomerProfile.fromJson(value.raw);
+Future<CustomerProfile> fetchCustomerProfile(DinerStore diner) async =>
+    _profile(await diner.customerRequest(_me));
 
-Future<_JsonCustomer> _fetchJsonCustomer(String id) async {
-  final payload = await http('/customers/$id');
+Future<CustomerProfile> updateCustomerProfile(DinerStore diner, CustomerProfileDraft draft) async =>
+    _profile(await diner.customerRequest(_me, method: 'PATCH', body: {
+      ..._nameFields(draft.name),
+      'phone': asString(draft.phone).trim().isEmpty ? null : draft.phone!.trim(),
+      'birthDate': draft.birthday,
+      'dietaryPreferences': draft.dietaryPreferences.join(', '),
+      'allergies': draft.allergens.isEmpty ? null : draft.allergens.join(', '),
+      'marketingOptIn': draft.marketingOptIn,
+    }));
 
-  if (!_isJsonCustomer(payload)) {
-    throw HttpError('No encontramos tu cuenta', 404);
-  }
-
-  return _JsonCustomer(asMap(payload));
-}
-
-/// Contrato pensado para el backend: GET /customers/me
-Future<CustomerProfile> fetchCustomerProfile(String id) async {
-  return _toProfile(await _fetchJsonCustomer(id));
-}
-
-/// Contrato pensado para el backend: PATCH /customers/me
-Future<CustomerProfile> updateCustomerProfile(String id, CustomerProfileDraft draft) async {
-  final phone = draft.phone?.trim() ?? '';
-  final birthday = draft.birthday ?? '';
-  final payload = await http('/customers/$id', method: 'PATCH', body: {
-    'name': draft.name.trim(),
-    'phone': phone.isNotEmpty ? phone : null,
-    'birthday': birthday.isNotEmpty ? birthday : null,
-    'dietaryPreferences': draft.dietaryPreferences,
-    'allergens': draft.allergens,
-    'marketingOptIn': draft.marketingOptIn,
+Future<void> changeCustomerPassword(DinerStore diner, String currentPassword, String nextPassword) async {
+  await diner.customerRequest('$_me/password', method: 'PATCH', body: {
+    'currentPassword': currentPassword,
+    'newPassword': nextPassword,
   });
-
-  if (!_isJsonCustomer(payload)) {
-    throw HttpError('No se pudo guardar tu perfil', 500);
-  }
-
-  return _toProfile(_JsonCustomer(asMap(payload)));
 }
 
-/// Contrato pensado para el backend: POST /customers/me/password. Con json-server la
-/// contraseña actual se compara en el cliente; el backend real lo hará del lado servidor.
-Future<void> changeCustomerPassword(String id, String currentPassword, String nextPassword) async {
-  final customer = await _fetchJsonCustomer(id);
-
-  if (customer.password != currentPassword) {
-    throw HttpError('La contraseña actual no es correcta', 401);
-  }
-
-  await http('/customers/$id', method: 'PATCH', body: {'password': nextPassword});
+Future<List<CustomerVisit>> fetchCustomerVisits(DinerStore diner) async {
+  final visits = <CustomerVisit>[];
+  var page = 1;
+  int totalPages;
+  do {
+    final data = asMap(await diner.customerRequest('$_me/attentions?page=$page&limit=100'));
+    visits.addAll(asMapList(data['items']).map(CustomerVisit.fromJson));
+    totalPages = asInt(asMap(data['meta'])['totalPages']);
+    page++;
+  } while (page <= totalPages);
+  return visits;
 }

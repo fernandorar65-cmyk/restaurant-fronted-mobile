@@ -13,17 +13,17 @@ Versión móvil (Flutter) de `vue-projects/restaurant-frontend`, con interfaces 
 ```sh
 flutter pub get
 
+# API desplegada en Azure (por defecto)
+flutter run
+
 # API NestJS local. Levántala con npm run start:dev en el repositorio del backend.
 flutter run --dart-define=API_ENV=local
-
-# API desplegada en Azure
-flutter run --dart-define=API_ENV=production
 
 # API local desde un teléfono físico (usa la IP de tu Mac)
 flutter run --dart-define=API_ENV=local --dart-define=API_BASE_URL=http://192.168.1.20:3000
 ```
 
-`API_ENV` vale `local` por defecto. Android emulado usa `10.0.2.2:3000` y el simulador iOS, web y escritorio usan `localhost:3000`. `API_BASE_URL` tiene prioridad y debe contener el origen del servidor. El cliente agrega la ruta de cada endpoint.
+`API_ENV` vale `production` por defecto. En modo local, Android emulado usa `10.0.2.2:3000` y el simulador iOS, web y escritorio usan `localhost:3000`. `API_BASE_URL` tiene prioridad y debe contener el origen del servidor. El cliente agrega la ruta de cada endpoint.
 
 Otras variables: `--dart-define=PUBLIC_WEB_URL=https://tu-dominio` (origen de los enlaces de los QR de mesa).
 

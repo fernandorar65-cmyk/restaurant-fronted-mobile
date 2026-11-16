@@ -164,3 +164,40 @@ const List<String> ALLERGEN_OPTIONS = [
   'Soja',
   'Sésamo',
 ];
+
+class CustomerVisit {
+  const CustomerVisit({
+    required this.restaurantId,
+    required this.restaurantName,
+    required this.currency,
+    required this.timezone,
+    required this.number,
+    required this.status,
+    required this.openedAt,
+    required this.total,
+  });
+
+  final String restaurantId;
+  final String restaurantName;
+  final String currency;
+  final String? timezone;
+  final String number;
+  final String status;
+  final String openedAt;
+  final double total;
+
+  factory CustomerVisit.fromJson(JsonMap data) {
+    final attention = asMap(data['attention']);
+    final restaurant = asMap(data['restaurant']);
+    return CustomerVisit(
+      restaurantId: asId(attention['restaurantId']),
+      restaurantName: asString(restaurant['name'], 'Restaurante'),
+      currency: asString(restaurant['currencyCode'], 'PEN'),
+      timezone: asStringOrNull(restaurant['timezone']),
+      number: asString(attention['attentionNumber']),
+      status: attention['status'] == 'BILL_REQUESTED' ? 'account-requested' : asString(attention['status']).toLowerCase(),
+      openedAt: asString(attention['openedAt']),
+      total: asDouble(data['total']),
+    );
+  }
+}

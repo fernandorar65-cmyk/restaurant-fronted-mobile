@@ -13,8 +13,7 @@ import '../../../stores/toast_store.dart';
 import '../../../widgets/base/base_button.dart';
 import '../../../widgets/base/skeleton_block.dart';
 import '../../auth/validation.dart';
-import '../../orders/api.dart';
-import '../../orders/types.dart';
+import '../../orders/api.dart' show errorMessage;
 import '../api.dart';
 import '../types.dart';
 
@@ -100,8 +99,8 @@ class _DinerProfileViewState extends State<DinerProfileView> {
   }
 
   Future<void> _load() async {
-    final customer = context.read<DinerStore>().customer;
-    if (customer == null) return;
+    final diner = context.read<DinerStore>();
+    if (diner.customer == null) return;
 
     setState(() {
       _isLoading = true;
@@ -110,11 +109,11 @@ class _DinerProfileViewState extends State<DinerProfileView> {
 
     try {
       final results = await Future.wait<Object>([
-        fetchCustomerProfile(customer.id),
-        fetchAttentionsByCustomer(customer.id).catchError((_) => <Attention>[]),
+        fetchCustomerProfile(diner),
+        fetchCustomerVisits(diner).catchError((_) => <CustomerVisit>[]),
       ]);
       final loaded = results[0] as CustomerProfile;
-      final attentions = results[1] as List<Attention>;
+      final attentions = results[1] as List<CustomerVisit>;
       if (!mounted) return;
       setState(() {
         _profile = loaded;
@@ -139,7 +138,7 @@ class _DinerProfileViewState extends State<DinerProfileView> {
 
     try {
       final saved = await updateCustomerProfile(
-        customer.id,
+        diner,
         CustomerProfileDraft(
           name: _name.text,
           phone: _phone.text,
@@ -469,9 +468,9 @@ class _DinerProfileViewState extends State<DinerProfileView> {
             const SizedBox(height: 16),
             _ChangePasswordForm(
               submit: (current, next) async {
-                final customer = context.read<DinerStore>().customer;
-                if (customer != null) {
-                  await changeCustomerPassword(customer.id, current, next);
+                final diner = context.read<DinerStore>();
+                if (diner.customer != null) {
+                  await changeCustomerPassword(diner, current, next);
                 }
               },
             ),

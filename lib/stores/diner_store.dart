@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
+import '../core/http/http_client.dart';
 import '../core/storage/local_storage.dart';
 import '../core/utils/json.dart';
 import '../core/utils/time.dart';
@@ -66,7 +69,11 @@ class DinerStore extends ChangeNotifier {
     confirmed = asBool(stored['confirmed']);
     attentionId = asStringOrNull(stored['attentionId']);
     final customerJson = asMapOrNull(stored['customer']);
-    customer = customerJson == null ? null : DinerCustomer.fromJson(customerJson);
+    _customerAccess = asStringOrNull(stored['customerAccess']);
+    _customerRefresh = asStringOrNull(stored['customerRefresh']);
+    customer = customerJson == null || _customerAccess == null || _customerRefresh == null
+        ? null
+        : DinerCustomer.fromJson(customerJson);
 
     recentRestaurants = asMapList(LocalStorage.readJson(_recentKey))
         .where((item) => item['id'] is String && item['visitedAt'] is String)
@@ -94,6 +101,10 @@ class DinerStore extends ChangeNotifier {
   bool confirmed = false;
   String? attentionId;
   DinerCustomer? customer;
+  String? _customerAccess;
+  String? _customerRefresh;
+  int _customerSession = 0;
+  Future<void>? _customerRenewal;
   List<RecentRestaurant> recentRestaurants = [];
   StoredTableCode? _storedTableCode;
 
@@ -185,9 +196,99 @@ class DinerStore extends ChangeNotifier {
     _save();
   }
 
-  void setCustomer(DinerCustomer? next) {
+  void startCustomerSession(DinerCustomer next, {required String accessToken, required String refreshToken}) {
+    _customerSession++;
+    _customerRenewal = null;
+    _customerAccess = accessToken;
+    _customerRefresh = refreshToken;
     customer = next;
     _save();
+  }
+
+  void setCustomer(DinerCustomer? next) {
+    if (next == null) {
+      final access = _customerAccess;
+      final refresh = _customerRefresh;
+      _clearCustomer();
+      if (access != null && refresh != null) {
+        unawaited(_revokeCustomer(access, refresh));
+      }
+      return;
+    }
+    if (customer?.id != next.id) return;
+    customer = next;
+    _save();
+  }
+
+  void _clearCustomer() {
+    _customerSession++;
+    _customerRenewal = null;
+    _customerAccess = null;
+    _customerRefresh = null;
+    customer = null;
+    _save();
+  }
+
+  Future<void> _revokeCustomer(String access, String refresh) async {
+    try {
+      await http('/api/v1/customer/auth/logout', method: 'POST', authenticated: false,
+        headers: {'Authorization': 'Bearer $access'}, body: {'refreshToken': refresh});
+    } on HttpError {
+      // El cierre local ya se completó.
+    }
+  }
+
+  Future<dynamic> customerRequest(String path, {String method = 'GET', Object? body}) async {
+    final access = _customerAccess;
+    final refresh = _customerRefresh;
+    final session = _customerSession;
+    if (access == null || refresh == null) throw HttpError('Inicia sesión para continuar', 401);
+
+    Future<dynamic> send(String token) => http(path, method: method, body: body, authenticated: false,
+      headers: {'Authorization': 'Bearer $token'});
+
+    try {
+      final result = await send(access);
+      if (_customerSession != session) throw HttpError('La sesión cambió', 401);
+      return result;
+    } on HttpError catch (error) {
+      if (_customerSession != session) rethrow;
+      if (error.errorCode == 'ACCOUNT_DISABLED') _clearCustomer();
+      if (error.status != 401 || error.errorCode != 'INVALID_ACCESS_TOKEN') rethrow;
+      if (_customerAccess == access) {
+        await (_customerRenewal ??= _renewCustomer(session, refresh).whenComplete(() {
+          if (_customerSession == session) _customerRenewal = null;
+        }));
+      }
+      final renewed = _customerAccess;
+      if (_customerSession != session || renewed == null) rethrow;
+      final result = await send(renewed);
+      if (_customerSession != session) throw HttpError('La sesión cambió', 401);
+      return result;
+    }
+  }
+
+  Future<void> _renewCustomer(int session, String refresh) async {
+    try {
+      final data = asMap(await http('/api/v1/customer/auth/refresh', method: 'POST',
+        authenticated: false, body: {'refreshToken': refresh}));
+      final access = asString(data['accessToken']);
+      final rotated = asString(data['refreshToken']);
+      if (access.isEmpty || rotated.isEmpty) throw HttpError('Respuesta de renovación inesperada', 500);
+      if (_customerSession != session) {
+        await _revokeCustomer(access, rotated);
+        return;
+      }
+      _customerAccess = access;
+      _customerRefresh = rotated;
+      _save();
+    } on HttpError catch (error) {
+      if (_customerSession == session &&
+          (error.errorCode == 'INVALID_REFRESH_TOKEN' || error.errorCode == 'ACCOUNT_DISABLED')) {
+        _clearCustomer();
+      }
+      rethrow;
+    }
   }
 
   void leaveTable() {
@@ -212,6 +313,8 @@ class DinerStore extends ChangeNotifier {
       'confirmed': confirmed,
       'attentionId': attentionId,
       'customer': customer?.toJson(),
+      'customerAccess': _customerAccess,
+      'customerRefresh': _customerRefresh,
     });
     notifyListeners();
   }

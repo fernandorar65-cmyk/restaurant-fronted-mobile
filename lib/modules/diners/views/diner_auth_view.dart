@@ -81,10 +81,11 @@ class _DinerAuthViewState extends State<DinerAuthView> {
     final diner = context.read<DinerStore>();
 
     try {
-      final customer = widget.register
-          ? await registerCustomer(_name.text, _email.text, _password.text)
-          : await loginCustomer(_email.text, _password.text);
-      diner.setCustomer(customer);
+      if (widget.register) {
+        await registerCustomer(diner, _name.text, _email.text, _password.text);
+      } else {
+        await loginCustomer(diner, _email.text, _password.text);
+      }
 
       if (diner.hasTable) {
         diner.confirmTable();

@@ -11,13 +11,11 @@ import '../../../stores/diner_store.dart';
 import '../../../widgets/base/base_button.dart';
 import '../../../widgets/base/skeleton_block.dart';
 import '../../../widgets/base/status_badge.dart';
-import '../../orders/api.dart';
+import '../../orders/api.dart' show errorMessage;
 import '../../orders/order_status_labels.dart';
-import '../../orders/types.dart';
-import '../../restaurants/api.dart';
-import '../../restaurants/types.dart';
 
-typedef _Visit = ({Attention attention, RestaurantSite? restaurant, double total});
+import '../api.dart';
+import '../types.dart';
 
 /// Historial de visitas del comensal con cuenta (/mis-visitas).
 class DinerVisitsView extends StatefulWidget {
@@ -28,7 +26,7 @@ class DinerVisitsView extends StatefulWidget {
 }
 
 class _DinerVisitsViewState extends State<DinerVisitsView> {
-  List<_Visit> _visits = [];
+  List<CustomerVisit> _visits = [];
   bool _isLoading = true;
   String? _loadError;
 
@@ -39,9 +37,9 @@ class _DinerVisitsViewState extends State<DinerVisitsView> {
   }
 
   Future<void> _loadVisits() async {
-    final customer = context.read<DinerStore>().customer;
+    final diner = context.read<DinerStore>();
 
-    if (customer == null) {
+    if (diner.customer == null) {
       setState(() => _isLoading = false);
       return;
     }
@@ -49,25 +47,7 @@ class _DinerVisitsViewState extends State<DinerVisitsView> {
     setState(() => _loadError = null);
 
     try {
-      final results = await Future.wait<Object>([fetchAttentionsByCustomer(customer.id), fetchRestaurants()]);
-      final attentions = results[0] as List<Attention>;
-      final restaurants = results[1] as List<RestaurantSite>;
-      final products = await fetchOrderedProductsByAttentions([for (final attention in attentions) attention.id]);
-
-      final visits = attentions.map((attention) {
-        RestaurantSite? restaurant;
-        for (final site in restaurants) {
-          if (site.id == attention.restaurantId) {
-            restaurant = site;
-            break;
-          }
-        }
-        final total = products
-            .where((product) => product.attentionId == attention.id && isBillableProduct(product.status))
-            .fold<double>(0, (sum, product) => sum + product.subtotal);
-        return (attention: attention, restaurant: restaurant, total: total);
-      }).toList();
-
+      final visits = await fetchCustomerVisits(diner);
       if (mounted) setState(() => _visits = visits);
     } catch (error) {
       if (mounted) setState(() => _loadError = errorMessage(error, 'No se pudo cargar tu historial.'));
@@ -143,48 +123,44 @@ class _DinerVisitsViewState extends State<DinerVisitsView> {
                   elevation: 1,
                   shadowColor: Colors.black12,
                   borderRadius: BorderRadius.circular(16),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(16),
-                    onTap: () => context.push(Routes.orderStatus(visit.attention.id)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${visit.restaurant?.name ?? 'Restaurante'} · Mesa ${visit.attention.tableNumber}',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: AppFonts.headline(fontSize: 14, color: c.onSurface),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  formatDateTime(visit.attention.openedAt, visit.restaurant?.timezone),
-                                  style: TextStyle(fontSize: 12, color: c.onSurfaceVariant),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                formatMoney(visit.total, visit.restaurant?.currency ?? 'EUR'),
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: c.onSurface),
+                                '${visit.restaurantName} · ${visit.number}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppFonts.headline(fontSize: 14, color: c.onSurface),
                               ),
-                              const SizedBox(height: 4),
-                              StatusBadge(
-                                tone: attentionStatusTone[visit.attention.status] ?? 'neutral',
-                                label: attentionStatusLabel[visit.attention.status] ?? visit.attention.status,
+                              const SizedBox(height: 2),
+                              Text(
+                                formatDateTime(visit.openedAt, visit.timezone),
+                                style: TextStyle(fontSize: 12, color: c.onSurfaceVariant),
                               ),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(width: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              formatMoney(visit.total, visit.currency),
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: c.onSurface),
+                            ),
+                            const SizedBox(height: 4),
+                            StatusBadge(
+                              tone: attentionStatusTone[visit.status] ?? 'neutral',
+                              label: attentionStatusLabel[visit.status] ?? visit.status,
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),
