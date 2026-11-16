@@ -139,7 +139,7 @@ class _RestaurantSelectViewState extends State<RestaurantSelectView> {
     });
 
     try {
-      final list = await fetchRestaurants();
+      final list = await fetchPublicRestaurants();
       if (mounted) setState(() => _restaurants = list);
     } catch (_) {
       if (mounted) setState(() => _hasLoadError = true);

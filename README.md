@@ -1,7 +1,6 @@
 # restaurant-fronted-mobile
 
-Versión móvil (Flutter) de `vue-projects/restaurant-frontend`: mismas rutas, mismos datos
-(`json-server` sobre `db.json`) y mismas reglas de negocio, con UI adaptada a móvil.
+Versión móvil (Flutter) de `vue-projects/restaurant-frontend`, con interfaces para el comensal y el personal del restaurante. La integración con NestJS está en curso. Consulta la [cobertura de endpoints](docs/COBERTURA-ENDPOINTS.md).
 
 ## Requisitos
 
@@ -12,16 +11,19 @@ Versión móvil (Flutter) de `vue-projects/restaurant-frontend`: mismas rutas, m
 ## Correr
 
 ```sh
-# 1. Backend: desde el proyecto Vue (--host 0.0.0.0 para que lo vea un teléfono físico)
-cd ../../vue-projects/restaurant-frontend
-npx json-server --host 0.0.0.0 --port 3001 db.json
-
-# 2. App
 flutter pub get
-flutter run                     # emulador Android usa 10.0.2.2:3001; simulador iOS/web usan localhost:3001
-flutter run -d chrome           # para probar rápido en el navegador
-flutter run --dart-define=API_BASE_URL=http://192.168.1.20:3001   # teléfono físico (IP de tu Mac)
+
+# API NestJS local. Levántala con npm run start:dev en el repositorio del backend.
+flutter run --dart-define=API_ENV=local
+
+# API desplegada en Azure
+flutter run --dart-define=API_ENV=production
+
+# API local desde un teléfono físico (usa la IP de tu Mac)
+flutter run --dart-define=API_ENV=local --dart-define=API_BASE_URL=http://192.168.1.20:3000
 ```
+
+`API_ENV` vale `local` por defecto. Android emulado usa `10.0.2.2:3000` y el simulador iOS, web y escritorio usan `localhost:3000`. `API_BASE_URL` tiene prioridad y debe contener el origen del servidor. El cliente agrega la ruta de cada endpoint.
 
 Otras variables: `--dart-define=PUBLIC_WEB_URL=https://tu-dominio` (origen de los enlaces de los QR de mesa).
 

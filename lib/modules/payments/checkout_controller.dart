@@ -163,7 +163,7 @@ class CheckoutController extends ChangeNotifier {
 
     final distance = deliveryDistanceKm;
 
-    if (distance != null && distance > options.deliveryRadiusKm) {
+    if (distance != null && options.deliveryRadiusKm > 0 && distance > options.deliveryRadiusKm) {
       return 'Tu ubicación está fuera del radio de entrega (${_formatNumber(options.deliveryRadiusKm)} km).';
     }
 
@@ -194,9 +194,12 @@ class CheckoutController extends ChangeNotifier {
     }
 
     try {
-      final (loadedSite, loadedProducts) = await (fetchRestaurantById(restaurantId), fetchMenuProducts(restaurantId)).wait;
+      final (loadedSite, menu) = await (
+        fetchPublicRestaurantById(restaurantId),
+        fetchPublicMenu(restaurantId),
+      ).wait;
       site = loadedSite;
-      products = loadedProducts;
+      products = menu.products;
     } catch (_) {
       loadError = true;
     } finally {

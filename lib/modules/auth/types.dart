@@ -11,6 +11,7 @@ class AuthUser {
     required this.permissions,
     required this.restaurantIds,
     required this.employeeId,
+    this.organizationId,
   });
 
   final String id;
@@ -24,6 +25,9 @@ class AuthUser {
   final List<String> restaurantIds;
   final String? employeeId;
 
+  /// Organización activa del usuario (el backend la pide en las rutas del panel).
+  final String? organizationId;
+
   factory AuthUser.fromJson(JsonMap json) => AuthUser(
         id: asId(json['id']),
         name: asString(json['name']),
@@ -33,6 +37,7 @@ class AuthUser {
         permissions: asStringList(json['permissions']).where(isPermission).toList(),
         restaurantIds: asStringList(json['restaurantIds']),
         employeeId: asStringOrNull(json['employeeId']),
+        organizationId: asStringOrNull(json['organizationId']),
       );
 
   JsonMap toJson() => {
@@ -44,13 +49,15 @@ class AuthUser {
         'permissions': permissions,
         'restaurantIds': restaurantIds,
         'employeeId': employeeId,
+        'organizationId': organizationId,
       };
 }
 
 class AuthSession {
-  const AuthSession({required this.accessToken, required this.user});
+  const AuthSession({required this.accessToken, required this.refreshToken, required this.user});
 
   final String accessToken;
+  final String refreshToken;
   final AuthUser user;
 }
 

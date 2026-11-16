@@ -49,34 +49,90 @@ Future<AuthUser> _toAuthUser(JsonUser user) async {
   );
 }
 
-Future<AuthSession> _toSession(JsonUser user) async => AuthSession(accessToken: 'json-${user.id}', user: await _toAuthUser(user));
+// Pendiente de migrar: el registro todavía usa las rutas de json-server y no tiene refresh token.
+Future<AuthSession> _toSession(JsonUser user) async =>
+    AuthSession(accessToken: 'json-${user.id}', refreshToken: '', user: await _toAuthUser(user));
 
-void _assertCanSignIn(JsonUser user) {
-  if (user.isBlocked) {
-    throw HttpError('Esta cuenta está bloqueada. Contactá a un administrador.', 403);
-  }
-
-  if (!user.isActive) {
-    throw HttpError('Esta cuenta está desactivada. Contactá a un administrador.', 403);
-  }
-}
-
-/// Vuelve a leer el usuario y su rol (permisos actualizados, bloqueo, desactivación).
+/// Vuelve a leer el usuario y su acceso (permisos actualizados, bloqueo, desactivación)
+/// con GET /api/v1/owner/me/profile. Devuelve null si la cuenta ya no puede entrar.
 Future<AuthUser?> refreshAuthUser(String userId) async {
   try {
-    final user = JsonUser.tryParse(await http('/users/$userId'));
-
-    if (user == null || user.isBlocked || !user.isActive) {
-      return null;
-    }
-
-    return await _toAuthUser(user);
+    final profile = await http('/api/v1/owner/me/profile');
+    return profile is Map ? _authUserFromStaff(asMap(profile)) : null;
   } on HttpError catch (error) {
-    if (error.status == 404) {
+    if (error.status == 401 || error.status == 404 || error.errorCode == 'ACCOUNT_DISABLED') {
       return null;
     }
 
     rethrow;
+  }
+}
+
+/// Permisos del backend → permisos de la app. El backend usa `área.acción`
+/// (`attentions.manage`, `catalog.manage`…); el portal sigue usando los suyos.
+const Map<String, List<Permission>> _backendPermissions = {
+  'organizations.manage': [Permissions.orgManage],
+  'settings.manage': [Permissions.orgManage],
+  'restaurants.manage': [Permissions.orgManage, Permissions.sitesManage],
+  'staff.manage': [Permissions.staffManage, Permissions.usersManage],
+  'attentions.manage': [Permissions.ordersManage],
+  'kitchen.manage': [Permissions.kitchenManage],
+  'catalog.manage': [Permissions.menuManage],
+  'payments.manage': [Permissions.paymentsManage],
+  'inventory.manage': [Permissions.inventoryManage],
+  'finance.read': [Permissions.reportsView],
+  'finance.manage': [Permissions.reportsView],
+};
+
+List<Permission> _toAppPermissions(List<String> codes, {required bool isPlatformAdmin}) {
+  if (isPlatformAdmin) {
+    return permissionsList;
+  }
+
+  return {for (final code in codes) ...?_backendPermissions[code]}.toList();
+}
+
+/// Arma el usuario de la app con `StaffLoginResponseDto` / `StaffProfileResponseDto`.
+/// La app maneja una organización a la vez: toma la primera membresía activa.
+AuthUser _authUserFromStaff(JsonMap data) {
+  final user = asMap(data['user']);
+  final accesses = asMapList(data['access']);
+  final access = accesses.isEmpty ? null : accesses.first;
+  final role = access == null ? null : asMapOrNull(access['role']);
+  final organizationId = access == null ? null : asStringOrNull(access['organizationId']);
+  final employments = asMapList(data['employments']);
+  final employment = employments.where((item) => asStringOrNull(item['organizationId']) == organizationId).firstOrNull;
+  final name = [asString(user['firstName']), asString(user['lastName'])].where((part) => part.trim().isNotEmpty).join(' ');
+
+  return AuthUser(
+    id: asId(user['id']),
+    name: name.isEmpty ? asString(user['email']) : name,
+    email: asString(user['email']),
+    roleId: role == null ? null : asStringOrNull(role['id']),
+    roleName: role == null ? null : asStringOrNull(role['name']),
+    permissions: _toAppPermissions(
+      access == null ? const [] : asStringList(access['permissions']),
+      isPlatformAdmin: asBool(data['isPlatformAdmin']),
+    ),
+    // Lista vacía = todas las sedes, igual que `allRestaurants: true` en el backend.
+    restaurantIds: access == null || asBool(access['allRestaurants']) ? const [] : asStringList(access['restaurantIds']),
+    employeeId: employment == null ? null : asStringOrNull(employment['employeeId']),
+    organizationId: organizationId,
+  );
+}
+
+/// Cierra la sesión en el backend (invalida el refresh token). Recibe el access token
+/// porque la sesión local ya se borró. Si falla, la sesión local se cierra igual.
+Future<void> logout({required String refreshToken, String? accessToken}) async {
+  try {
+    await http(
+      '/api/v1/owner/auth/logout',
+      method: 'POST',
+      body: {'refreshToken': refreshToken},
+      headers: {if (accessToken != null) 'Authorization': 'Bearer $accessToken'},
+    );
+  } catch (_) {
+    // El token vence solo; no bloquea el cierre de sesión local.
   }
 }
 
@@ -87,19 +143,25 @@ Future<List<JsonUser>> _findUsersByEmail(String email) async {
   return asList(users).map(JsonUser.tryParse).whereType<JsonUser>().toList();
 }
 
+/// POST /api/v1/owner/auth/login: el backend valida la contraseña y devuelve los tokens
+/// junto con el acceso por organización (rol, sedes y permisos).
 Future<AuthSession> login(LoginPayload payload) async {
-  final email = _normalizeEmail(payload.email);
-  final users = await _findUsersByEmail(email);
-  final matches = users.where((candidate) => _normalizeEmail(candidate.email) == email && candidate.password == payload.password);
+  final data = await http(
+    '/api/v1/owner/auth/login',
+    method: 'POST',
+    body: {'email': _normalizeEmail(payload.email), 'password': payload.password},
+  );
 
-  if (matches.isEmpty) {
-    throw HttpError('Correo o contraseña incorrectos', 401);
+  if (data is! Map || data['accessToken'] is! String || data['refreshToken'] is! String) {
+    throw HttpError('Respuesta de inicio de sesión inesperada', 500);
   }
 
-  final user = matches.first;
-  _assertCanSignIn(user);
-
-  return _toSession(user);
+  final json = asMap(data);
+  return AuthSession(
+    accessToken: json['accessToken'] as String,
+    refreshToken: json['refreshToken'] as String,
+    user: _authUserFromStaff(json),
+  );
 }
 
 Future<AuthSession> register(RegisterPayload payload) async {

@@ -412,8 +412,14 @@ class OrderItemCheck {
 
 /// Revisa el carrito contra la carta vigente antes de enviarlo: productos que ya
 /// no existen, se desactivaron, se agotaron o cambiaron de precio.
-Future<List<CartIssue>> validateOrderItems(String restaurantId, List<OrderItemCheck> items) async {
-  final products = await fetchMenuProducts(restaurantId);
+Future<List<CartIssue>> validateOrderItems(
+  String restaurantId,
+  List<OrderItemCheck> items, {
+  bool publicMenu = false,
+}) async {
+  final products = publicMenu
+      ? (await fetchPublicMenu(restaurantId)).products
+      : await fetchMenuProducts(restaurantId);
   final issues = <CartIssue>[];
 
   for (final item in items) {

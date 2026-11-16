@@ -78,15 +78,55 @@ Future<List<RestaurantSite>> fetchRestaurants() async {
   return payload.where(_isRestaurantSite).map(_toRestaurantSite).toList();
 }
 
-/// Sede por su slug de URL. json-server no filtra por campos calculados, así que se busca en la lista.
-Future<RestaurantSite?> fetchRestaurantBySlug(String slug) async {
-  final restaurants = await fetchRestaurants();
+RestaurantSite _storefrontSite(JsonMap data) {
+  final services = {
+    for (final service in asMapList(data['services'])) service['fulfillmentMode']: service,
+  };
+  final delivery = services['DELIVERY'];
 
-  for (final site in restaurants) {
-    if (site.slug == slug) return site;
+  return RestaurantSite.fromJson({
+    ...data,
+    'status': 'active',
+    'currency': data['currencyCode'],
+    'lat': data['latitude'],
+    'lng': data['longitude'],
+    'fulfillment': {
+      'dineIn': services.containsKey('DINE_IN'),
+      'pickup': services.containsKey('PICKUP'),
+      'delivery': delivery != null,
+      'deliveryFee': delivery?['deliveryFee'],
+      'minOrder': delivery?['minimumOrderAmount'],
+    },
+  });
+}
+
+Future<List<RestaurantSite>> fetchPublicRestaurants() async {
+  final sites = <RestaurantSite>[];
+  var page = 1;
+  int totalPages;
+  do {
+    final data = asMap(await http('/api/v1/restaurants?page=$page&limit=100', authenticated: false));
+    sites.addAll(asMapList(data['items']).map(_storefrontSite));
+    totalPages = asInt(asMap(data['meta'])['totalPages']);
+    page++;
+  } while (page <= totalPages);
+  return sites;
+}
+
+Future<RestaurantSite?> fetchRestaurantBySlug(String slug) =>
+    _fetchPublicRestaurant('/api/v1/restaurants/slug/${Uri.encodeComponent(slug)}');
+
+Future<RestaurantSite?> fetchPublicRestaurantById(String id) =>
+    _fetchPublicRestaurant('/api/v1/restaurants/${Uri.encodeComponent(id)}');
+
+Future<RestaurantSite?> _fetchPublicRestaurant(String path) async {
+  try {
+    final data = await http(path, authenticated: false);
+    return _storefrontSite(asMap(data));
+  } on HttpError catch (error) {
+    if (error.status == 404) return null;
+    rethrow;
   }
-
-  return null;
 }
 
 Future<RestaurantSite?> fetchRestaurantById(String id) async {

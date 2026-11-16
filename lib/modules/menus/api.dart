@@ -163,6 +163,36 @@ Future<List<MenuProduct>> fetchMenuProducts(String restaurantId) async {
 }
 
 /// Carta que ve el comensal: categorías del menú activo y solo productos activos.
+Future<({List<MenuCategory> categories, List<MenuProduct> products})> fetchPublicMenu(String restaurantId) async {
+  final data = asMap(await http('/api/v1/restaurants/$restaurantId/menu', authenticated: false));
+  final menuId = asId(asMap(data['menu'])['id']);
+  final categories = [
+    for (final section in asMapList(data['sections']))
+      MenuCategory.fromJson({...section, 'restaurantId': restaurantId, 'menuId': menuId}),
+  ];
+  const uncategorizedId = 'uncategorized';
+  final products = [
+    for (final product in asMapList(data['products']))
+      MenuProduct.fromJson({
+        ...product,
+        'restaurantId': restaurantId,
+        'categoryId': product['menuSectionId'] ?? uncategorizedId,
+        'prepMinutes': product['preparationMinutes'],
+      }),
+  ];
+  if (products.any((product) => product.categoryId == uncategorizedId)) {
+    categories.add(MenuCategory(
+      id: uncategorizedId,
+      restaurantId: restaurantId,
+      menuId: menuId,
+      name: 'Otros',
+      description: '',
+      position: categories.length,
+    ));
+  }
+  return (categories: categories, products: products);
+}
+
 Future<({List<MenuCategory> categories, List<MenuProduct> products})> fetchCustomerMenu(String restaurantId) async {
   final (categories, products) = await (fetchActiveMenuCategories(restaurantId), fetchMenuProducts(restaurantId)).wait;
   final categoryIds = categories.map((category) => category.id).toSet();

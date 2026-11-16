@@ -522,27 +522,28 @@ class _FulfillmentViewState extends State<FulfillmentView> {
             },
           ),
         ),
-        Wrap(
-          spacing: 12,
-          runSpacing: 8,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            BaseButton(
-              label: 'Comprobar con mi ubicación',
-              icon: Icons.location_on_outlined,
-              loading: _locating,
-              onPressed: _shareLocation,
-            ),
-            if (distance != null)
-              Text(
-                'A ${distance.toStringAsFixed(1)} km · '
-                '${distance <= radius ? 'dentro de la zona de entrega' : 'fuera de la zona de entrega'}',
-                style: TextStyle(fontSize: 14, color: distance <= radius ? c.success : c.error),
-              )
-            else if (_locationError != null)
-              Text(_locationError!, style: TextStyle(fontSize: 14, color: c.error)),
-          ],
-        ),
+        if (radius > 0)
+          Wrap(
+            spacing: 12,
+            runSpacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              BaseButton(
+                label: 'Comprobar con mi ubicación',
+                icon: Icons.location_on_outlined,
+                loading: _locating,
+                onPressed: _shareLocation,
+              ),
+              if (distance != null)
+                Text(
+                  'A ${distance.toStringAsFixed(1)} km · '
+                  '${distance <= radius ? 'dentro de la zona de entrega' : 'fuera de la zona de entrega'}',
+                  style: TextStyle(fontSize: 14, color: distance <= radius ? c.success : c.error),
+                )
+              else if (_locationError != null)
+                Text(_locationError!, style: TextStyle(fontSize: 14, color: c.error)),
+            ],
+          ),
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(color: c.surfaceContainerLow, borderRadius: BorderRadius.circular(12)),
@@ -552,7 +553,7 @@ class _FulfillmentViewState extends State<FulfillmentView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               spacing: 4,
               children: [
-                Text('Entregamos hasta ${formatPlainNumber(radius)} km de la sede.'),
+                if (radius > 0) Text('Entregamos hasta ${formatPlainNumber(radius)} km de la sede.'),
                 Text('Envío: ${formatMoney(options.deliveryFee, currency)}'),
                 if (options.minOrder > 0) Text('Pedido mínimo: ${formatMoney(options.minOrder, currency)}'),
                 Text('Llega en unos ${_checkout.prepMinutes + 20} min.'),

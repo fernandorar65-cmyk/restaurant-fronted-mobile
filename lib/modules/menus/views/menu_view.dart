@@ -123,7 +123,7 @@ class _MenuViewState extends State<MenuView> {
           cart.ensureRestaurant(found.id);
         }
 
-        final menu = await fetchCustomerMenu(found.id);
+        final menu = await fetchPublicMenu(found.id);
 
         if (menu.products.isEmpty) {
           notice = 'empty-menu';

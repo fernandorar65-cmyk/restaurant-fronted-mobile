@@ -93,7 +93,7 @@ class _CartViewState extends State<CartView> {
     });
 
     try {
-      final issues = await validateOrderItems(restaurantId, _checks(cart));
+      final issues = await validateOrderItems(restaurantId, _checks(cart), publicMenu: true);
       if (!mounted) return;
       setState(() => _issues = issues);
 
@@ -154,7 +154,7 @@ class _CartViewState extends State<CartView> {
     });
 
     try {
-      final issues = await validateOrderItems(restaurantId, _checks(cart));
+      final issues = await validateOrderItems(restaurantId, _checks(cart), publicMenu: true);
       if (!mounted) return;
       setState(() => _issues = issues);
 
